@@ -1,0 +1,21 @@
+[package]
+name = "tauri-plugin-sharekit"
+version = "0.1.0"
+description = "A Tauri v2 plugin that enables sharing content with the Android and iOS native sharing interfaces."
+edition = "2021"
+authors = [ "You" ]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Choochmeque/tauri-plugin-sharekit"
+exclude = ["/examples", "/dist-js", "/guest-js", "/node_modules"]
+links = "tauri-plugin-sharekit"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2.7.0" }
+log = "0.4"
+thiserror = "1"
+serde_repr = "0.1"
+
+[build-dependencies]
+tauri-plugin = { version = "2.3.0", features = ["build"] }
