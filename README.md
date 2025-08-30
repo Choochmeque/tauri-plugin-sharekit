@@ -51,7 +51,7 @@ First you need to register the core plugin with Tauri:
 ```rust
 fn main() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_sharesheet::init())
+        .plugin(tauri_plugin_sharekit::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
