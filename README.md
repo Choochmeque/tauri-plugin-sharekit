@@ -1,3 +1,7 @@
+[![npm](https://img.shields.io/npm/v/@choochmeque/tauri-plugin-sharekit-api.svg)](https://www.npmjs.com/package/@choochmeque/tauri-plugin-sharekit-api)
+[![Crates.io](https://img.shields.io/crates/v/tauri-plugin-sharekit.svg)](https://crates.io/crates/tauri-plugin-sharekit)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Choochmeque/tauri-plugin-sharekit/blob/main/LICENSE)
+
 # Tauri Plugin ShareKit
 
 Share content to other apps via native Android and iOS sharing interfaces.
