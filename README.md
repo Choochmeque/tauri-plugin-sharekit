@@ -1,3 +1,5 @@
+# Tauri Plugin ShareKit
+
 Share content to other apps via native Android and iOS sharing interfaces.
 
 ## Install
@@ -16,8 +18,8 @@ Install the Core plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-sharekit = "0.1.0"
-  # alternatively with Git:
+tauri-plugin-sharekit = "0.1"
+# alternatively with Git:
 tauri-plugin-sharekit = { git = "https://github.com/Choochmeque/tauri-plugin-sharekit" }
 ```
 
@@ -78,4 +80,4 @@ PRs accepted. Please make sure to read the Contributing Guide before making a pu
 
 ## License
 
-MIT or APACHE-2.0
+MIT

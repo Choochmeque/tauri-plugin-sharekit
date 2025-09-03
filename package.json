@@ -1,7 +1,7 @@
 {
   "name": "@choochmeque/tauri-plugin-sharekit-api",
   "version": "0.1.2",
-  "license": "MIT or APACHE-2.0",
+  "license": "MIT",
   "authors": "you",
   "description": "A Tauri v2 plugin that enables sharing content with the Android and iOS native sharing interfaces.",
   "type": "module",
