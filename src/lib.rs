@@ -20,7 +20,6 @@ use desktop::Share;
 #[cfg(mobile)]
 use mobile::Share;
 
-
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`], [`tauri::WebviewWindow`], [`tauri::Webview`] and [`tauri::Window`] to access the share APIs.
 pub trait ShareExt<R: Runtime> {
     fn share(&self) -> &Share<R>;

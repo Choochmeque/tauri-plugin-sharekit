@@ -13,7 +13,7 @@
     "import": "./dist-js/index.js",
     "require": "./dist-js/index.cjs"
   },
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/Choochmeque/tauri-plugin-sharekit.git"
   },
