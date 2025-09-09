@@ -20,7 +20,10 @@
     "xctoolchain",
     "rpath",
     "Xswiftc",
-    "objc"
+    "objc",
+    "sharekit",
+    "choochmeque",
+    "thiserror"
   ],
   "useGitignore": true,
   "ignorePaths": [
@@ -40,6 +43,7 @@
     "**/fixtures/**/*.json",
     "**/fixtures/sampleCode/*errors/",
     "node_modules",
+    "permissions/**",
     "main_root.js",
     "package-lock.json",
     "pnpm-lock.yaml",
