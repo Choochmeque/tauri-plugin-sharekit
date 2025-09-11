@@ -4,7 +4,7 @@
 
 # Tauri Plugin ShareKit
 
-Share content to other apps via native Android and iOS sharing interfaces.
+Share content to other apps via native sharing interfaces on Android, iOS, macOS and Windows.
 
 ## Install
 
@@ -22,14 +22,12 @@ Install the Core plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-sharekit = "0.1"
+tauri-plugin-sharekit = "0.2"
 # alternatively with Git:
 tauri-plugin-sharekit = { git = "https://github.com/Choochmeque/tauri-plugin-sharekit" }
 ```
 
 You can install the JavaScript Guest bindings using your preferred JavaScript package manager:
-
-> Note: Since most JavaScript package managers are unable to install packages from git monorepos we provide read-only mirrors of each plugin. This makes installation option 2 more ergonomic to use.
 
 <!-- Add the branch for installations using git! -->
 
