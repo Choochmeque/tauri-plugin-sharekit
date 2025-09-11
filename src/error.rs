@@ -11,6 +11,11 @@ pub enum Error {
     PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),
     #[error("This feature is not supported on this platform")]
     UnsupportedPlatform,
+    #[error("Window not found")]
+    WindowNotFound,
+    #[cfg(target_os = "windows")]
+    #[error("Windows API error: {0}")]
+    WindowsApi(String),
 }
 
 impl Serialize for Error {

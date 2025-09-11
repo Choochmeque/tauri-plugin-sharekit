@@ -5,10 +5,12 @@ use tauri::{
 
 pub use models::*;
 
-#[cfg(desktop)]
+#[cfg(all(desktop, not(target_os = "windows")))]
 mod desktop;
 #[cfg(mobile)]
 mod mobile;
+#[cfg(target_os = "windows")]
+mod windows;
 
 mod commands;
 mod error;
@@ -16,10 +18,12 @@ mod models;
 
 pub use error::{Error, Result};
 
-#[cfg(desktop)]
+#[cfg(all(desktop, not(target_os = "windows")))]
 use desktop::ShareKit;
 #[cfg(mobile)]
 use mobile::ShareKit;
+#[cfg(target_os = "windows")]
+use windows::ShareKit;
 
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`], [`tauri::WebviewWindow`], [`tauri::Webview`] and [`tauri::Window`] to access the share APIs.
 pub trait ShareExt<R: Runtime> {
@@ -42,8 +46,10 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .setup(|app, api| {
             #[cfg(mobile)]
             let share = mobile::init(app, api)?;
-            #[cfg(desktop)]
+            #[cfg(all(desktop, not(target_os = "windows")))]
             let share = desktop::init(app, api)?;
+            #[cfg(target_os = "windows")]
+            let share = windows::init(app, api)?;
             app.manage(share);
             Ok(())
         })
