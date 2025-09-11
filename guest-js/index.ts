@@ -25,7 +25,7 @@ export async function shareText(
   text: string,
   options?: ShareTextOptions,
 ): Promise<void> {
-  await invoke("plugin:share|share_text", {
+  await invoke("plugin:sharekit|share_text", {
     text,
     ...options,
   });
@@ -49,7 +49,7 @@ export async function shareFile(
   url: string,
   options?: ShareFileOptions,
 ): Promise<void> {
-  await invoke("plugin:share|share_file", {
+  await invoke("plugin:sharekit|share_file", {
     url,
     ...options,
   });
