@@ -5,8 +5,10 @@ use tauri::{
 
 pub use models::*;
 
-#[cfg(all(desktop, not(target_os = "windows")))]
+#[cfg(all(desktop, not(target_os = "macos"), not(target_os = "windows")))]
 mod desktop;
+#[cfg(target_os = "macos")]
+mod macos;
 #[cfg(mobile)]
 mod mobile;
 #[cfg(target_os = "windows")]
@@ -18,8 +20,10 @@ mod models;
 
 pub use error::{Error, Result};
 
-#[cfg(all(desktop, not(target_os = "windows")))]
+#[cfg(all(desktop, not(target_os = "macos"), not(target_os = "windows")))]
 use desktop::ShareKit;
+#[cfg(target_os = "macos")]
+use macos::ShareKit;
 #[cfg(mobile)]
 use mobile::ShareKit;
 #[cfg(target_os = "windows")]
@@ -46,8 +50,10 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .setup(|app, api| {
             #[cfg(mobile)]
             let share = mobile::init(app, api)?;
-            #[cfg(all(desktop, not(target_os = "windows")))]
+            #[cfg(all(desktop, not(target_os = "macos"), not(target_os = "windows")))]
             let share = desktop::init(app, api)?;
+            #[cfg(target_os = "macos")]
+            let share = macos::init(app, api)?;
             #[cfg(target_os = "windows")]
             let share = windows::init(app, api)?;
             app.manage(share);
