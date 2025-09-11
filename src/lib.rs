@@ -17,18 +17,18 @@ mod models;
 pub use error::{Error, Result};
 
 #[cfg(desktop)]
-use desktop::Share;
+use desktop::ShareKit;
 #[cfg(mobile)]
-use mobile::Share;
+use mobile::ShareKit;
 
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`], [`tauri::WebviewWindow`], [`tauri::Webview`] and [`tauri::Window`] to access the share APIs.
 pub trait ShareExt<R: Runtime> {
-    fn share(&self) -> &Share<R>;
+    fn share(&self) -> &ShareKit<R>;
 }
 
 impl<R: Runtime, T: Manager<R>> crate::ShareExt<R> for T {
-    fn share(&self) -> &Share<R> {
-        self.state::<Share<R>>().inner()
+    fn share(&self) -> &ShareKit<R> {
+        self.state::<ShareKit<R>>().inner()
     }
 }
 
