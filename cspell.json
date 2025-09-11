@@ -25,7 +25,8 @@
     "choochmeque",
     "thiserror",
     "HSTRING",
-    "SINGLETHREADED"
+    "SINGLETHREADED",
+    "NSURL"
   ],
   "useGitignore": true,
   "ignorePaths": [

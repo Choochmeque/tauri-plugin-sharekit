@@ -35,7 +35,7 @@ impl<R: Runtime> ShareKit<R> {
                         .ok_or(crate::Error::WindowNotFound)?;
                     let ns_window = window
                         .ns_window()
-                        .map_err(|_| crate::Error::UnsupportedPlatform)?
+                        .map_err(|_| crate::Error::WindowNotFound)?
                         as *mut NSWindow;
                     let content_view = unsafe {
                         ns_window
@@ -99,7 +99,7 @@ impl<R: Runtime> ShareKit<R> {
                         .ok_or(crate::Error::WindowNotFound)?;
                     let ns_window = window
                         .ns_window()
-                        .map_err(|_| crate::Error::UnsupportedPlatform)?
+                        .map_err(|_| crate::Error::WindowNotFound)?
                         as *mut NSWindow;
                     let content_view = unsafe {
                         ns_window
