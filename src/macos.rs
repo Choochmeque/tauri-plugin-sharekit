@@ -1,13 +1,14 @@
+use objc2::AnyThread;
 use serde::de::DeserializeOwned;
 use tauri::Manager;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
 use crate::models::*;
 
-use objc2::runtime::AnyObject;
-use objc2::{rc::Retained, ClassType};
+use objc2::{rc::Retained, runtime::AnyObject};
 use objc2_app_kit::{NSSharingServicePicker, NSWindow};
-use objc2_foundation::{CGPoint, CGSize, NSArray, NSRect, NSRectEdge, NSString, NSURL};
+use objc2_core_foundation::{CGPoint, CGSize};
+use objc2_foundation::{NSArray, NSRect, NSRectEdge, NSString, NSURL};
 
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
@@ -47,10 +48,10 @@ impl<R: Runtime> ShareKit<R> {
 
                     let mut items: Vec<Retained<AnyObject>> = Vec::new();
                     let ns_string = NSString::from_str(&text);
-                    items.push(unsafe { Retained::cast(ns_string) });
+                    items.push(unsafe { Retained::cast_unchecked(ns_string) });
 
                     // NSArray from Vec
-                    let items_array = NSArray::from_vec(items);
+                    let items_array = NSArray::from_retained_slice(&items);
 
                     let rect = NSRect::new(CGPoint::new(0.0, 0.0), CGSize::new(1.0, 1.0));
                     let picker = unsafe {
@@ -110,15 +111,11 @@ impl<R: Runtime> ShareKit<R> {
                     };
 
                     let mut items: Vec<Retained<AnyObject>> = Vec::new();
-                    let ns_url = unsafe {
-                        NSURL::URLWithString(&NSString::from_str(&url)).ok_or(crate::Error::Io(
-                            std::io::Error::new(std::io::ErrorKind::InvalidInput, "Invalid URL"),
-                        ))?
-                    };
-                    items.push(unsafe { Retained::cast(ns_url) });
+                    let ns_url = unsafe { NSURL::fileURLWithPath(&NSString::from_str(&url)) };
+                    items.push(unsafe { Retained::cast_unchecked(ns_url) });
 
                     // NSArray from Vec
-                    let items_array = NSArray::from_vec(items);
+                    let items_array = NSArray::from_retained_slice(&items);
 
                     let rect = NSRect::new(CGPoint::new(0.0, 0.0), CGSize::new(1.0, 1.0));
                     let picker = unsafe {
