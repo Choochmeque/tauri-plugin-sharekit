@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.webkit.WebView
 import android.net.Uri
+import androidx.activity.result.ActivityResult
+import app.tauri.annotation.ActivityCallback
 import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
@@ -36,7 +38,7 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
      * Open the native sharing interface to share some text
      */
     @Command
-    fun shareText(invoke: Invoke) {        
+    fun shareText(invoke: Invoke) {
         val args = invoke.parseArgs(ShareTextOptions::class.java)
 
         val sendIntent = Intent().apply {
@@ -46,9 +48,17 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
             this.putExtra(Intent.EXTRA_TITLE, args.title)
         }
 
-        val shareIntent = Intent.createChooser(sendIntent, null);
-        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.applicationContext?.startActivity(shareIntent);
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivityForResult(invoke, shareIntent, "shareTextResult")
+    }
+
+    @ActivityCallback
+    private fun shareTextResult(invoke: Invoke, result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_CANCELED) {
+            invoke.reject("Share cancelled")
+            return
+        }
+        invoke.resolve()
     }
 
     /**
@@ -90,7 +100,15 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
         }
 
         val shareIntent = Intent.createChooser(sendIntent, args.title)
-        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        activity.applicationContext?.startActivity(shareIntent)
+        startActivityForResult(invoke, shareIntent, "shareFileResult")
+    }
+
+    @ActivityCallback
+    private fun shareFileResult(invoke: Invoke, result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_CANCELED) {
+            invoke.reject("Share cancelled")
+            return
+        }
+        invoke.resolve()
     }
 }

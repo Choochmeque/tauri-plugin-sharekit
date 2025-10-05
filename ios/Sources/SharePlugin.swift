@@ -27,7 +27,7 @@ class SharePlugin: Plugin {
 
     DispatchQueue.main.async {
       let activityViewController = UIActivityViewController(activityItems: [args.text], applicationActivities: nil)
-      
+
       // Display as popover on iPad as required by apple
       activityViewController.popoverPresentationController?.sourceView = self.webview // display as a popover on ipad
       activityViewController.popoverPresentationController?.sourceRect = CGRect(
@@ -36,6 +36,16 @@ class SharePlugin: Plugin {
         width: CGFloat(Float(0.0)),
         height: CGFloat(Float(0.0))
       )
+
+      activityViewController.completionWithItemsHandler = { _, completed, _, error in
+        if let error = error {
+          invoke.reject(error.localizedDescription)
+        } else if completed {
+          invoke.resolve()
+        } else {
+          invoke.reject("Share cancelled")
+        }
+      }
 
       self.manager.viewController?.present(activityViewController, animated: true, completion: nil)
     }
@@ -72,7 +82,17 @@ class SharePlugin: Plugin {
         width: CGFloat(Float(0.0)),
         height: CGFloat(Float(0.0))
       )
-      
+
+      activityViewController.completionWithItemsHandler = { _, completed, _, error in
+        if let error = error {
+          invoke.reject(error.localizedDescription)
+        } else if completed {
+          invoke.resolve()
+        } else {
+          invoke.reject("Share cancelled")
+        }
+      }
+
       self.manager.viewController?.present(activityViewController, animated: true, completion: nil)
     }
   }
