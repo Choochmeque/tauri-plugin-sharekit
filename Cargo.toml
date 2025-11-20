@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-sharekit"
-version = "0.2.3"
+version = "0.2.4"
 description = "A Tauri v2 plugin that enables sharing content with native sharing interfaces on Android, iOS, macOS and Windows."
 edition = "2021"
 authors = [ "You" ]
