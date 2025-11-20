@@ -61,13 +61,11 @@ impl<R: Runtime> ShareKit<R> {
                         )
                     };
 
-                    unsafe {
-                        picker.showRelativeToRect_ofView_preferredEdge(
-                            rect,
-                            &content_view,
-                            NSRectEdge::NSMinYEdge,
-                        )
-                    };
+                    picker.showRelativeToRect_ofView_preferredEdge(
+                        rect,
+                        &content_view,
+                        NSRectEdge::NSMinYEdge,
+                    );
 
                     Ok(())
                 })();
@@ -111,7 +109,7 @@ impl<R: Runtime> ShareKit<R> {
                     };
 
                     let mut items: Vec<Retained<AnyObject>> = Vec::new();
-                    let ns_url = unsafe { NSURL::fileURLWithPath(&NSString::from_str(&url)) };
+                    let ns_url = NSURL::fileURLWithPath(&NSString::from_str(&url));
                     items.push(unsafe { Retained::cast_unchecked(ns_url) });
 
                     // NSArray from Vec
@@ -125,13 +123,11 @@ impl<R: Runtime> ShareKit<R> {
                         )
                     };
 
-                    unsafe {
-                        picker.showRelativeToRect_ofView_preferredEdge(
-                            rect,
-                            &content_view,
-                            NSRectEdge::NSMinYEdge,
-                        )
-                    };
+                    picker.showRelativeToRect_ofView_preferredEdge(
+                        rect,
+                        &content_view,
+                        NSRectEdge::NSMinYEdge,
+                    );
 
                     Ok(())
                 })();
