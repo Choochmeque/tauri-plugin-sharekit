@@ -148,6 +148,42 @@ Add these intent filters inside your `<activity>` tag:
 
 You can customize the `mimeType` values to only accept specific file types.
 
+### Displaying Received Images
+
+To display received images in your app, enable the asset protocol feature and configure the scope.
+
+`src-tauri/Cargo.toml`
+
+```toml
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+```
+
+`src-tauri/tauri.conf.json`
+
+```json
+{
+  "app": {
+    "security": {
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["$CACHE/**", "$APPCACHE/**"]
+      }
+    }
+  }
+}
+```
+
+Then in your frontend:
+
+```javascript
+import { convertFileSrc } from "@tauri-apps/api/core";
+
+// file.path is from SharedContent.files
+const imageUrl = convertFileSrc(file.path);
+// Use imageUrl in an <img> tag
+```
+
 ## Contributing
 
 PRs accepted. Please make sure to read the Contributing Guide before making a pull request.
