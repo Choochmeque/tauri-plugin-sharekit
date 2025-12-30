@@ -47,6 +47,7 @@ impl<R: Runtime> ShareKit<R> {
         Self { app }
     }
 
+    /// Opens the native share UI to share text content.
     pub fn share_text(&self, text: String, _options: ShareTextOptions) -> crate::Result<()> {
         // Get the window handle from Tauri
         let window = self
@@ -57,15 +58,15 @@ impl<R: Runtime> ShareKit<R> {
             .hwnd()
             .map_err(|e| crate::Error::WindowsApi(e.to_string()))?;
 
-        // Get IDataTransferManagerInterop factory
+        // Get DataTransferManager bound to our window
         let class = HSTRING::from("Windows.ApplicationModel.DataTransfer.DataTransferManager");
         let interop: IDataTransferManagerInterop = unsafe { RoGetActivationFactory(&class)? };
-
-        // Get DataTransferManager bound to our HWND
         let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
 
-        // Create a channel to signal when DataRequested has been called
-        let (tx, rx) = mpsc::channel::<Result<(), String>>();
+        // setup_tx: signals when data preparation is done (with success/error)
+        // complete_tx: signals when user completes or cancels the share
+        let (setup_tx, setup_rx) = mpsc::channel::<Result<(), String>>();
+        let (complete_tx, complete_rx) = mpsc::channel::<bool>();
 
         // Set up the DataRequested handler
         let content = HSTRING::from(text);
@@ -77,33 +78,62 @@ impl<R: Runtime> ShareKit<R> {
                         if let Some(args) = args.as_ref() {
                             let data = args.Request()?.Data()?;
                             let props = data.Properties()?;
-                            // Title and Description are required for Windows share to work properly
                             props.SetTitle(&app_name)?;
                             props.SetDescription(&content)?;
                             data.SetText(&content)?;
+
+                            // Set up ShareCompleted handler
+                            let tx_completed = complete_tx.clone();
+                            data.ShareCompleted(&TypedEventHandler::new(move |_, _| {
+                                let _ = tx_completed.send(true);
+                                Ok(())
+                            }))?;
+
+                            // Set up ShareCanceled handler
+                            let tx_canceled = complete_tx.clone();
+                            data.ShareCanceled(&TypedEventHandler::new(move |_, _| {
+                                let _ = tx_canceled.send(false);
+                                Ok(())
+                            }))?;
                         }
                         Ok(())
                     })();
-
-                    // Always signal completion with result
-                    let _ = tx.send(result.map_err(|e| e.to_string()));
-
+                    let _ = setup_tx.send(result.map_err(|e| e.to_string()));
                     Ok(())
                 },
             );
         let token = dtm.DataRequested(&handler)?;
 
-        // Show the Share UI for this window
+        // Show the native share UI
         unsafe {
             interop.ShowShareUIForWindow(hwnd)?;
         }
 
-        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()));
+        // Wait for data preparation to complete
+        let setup_result = setup_rx
+            .recv()
+            .map_err(|e| Error::WindowsApi(e.to_string()))
+            .and_then(|r| r.map_err(Error::WindowsApi));
+
+        if let Err(e) = setup_result {
+            let _ = dtm.RemoveDataRequested(token);
+            return Err(e);
+        }
+
+        // Wait for user to complete or cancel the share
+        let completed = complete_rx
+            .recv()
+            .map_err(|e| Error::WindowsApi(e.to_string()))?;
         let _ = dtm.RemoveDataRequested(token);
 
-        handler_result?.map_err(Error::WindowsApi)
+        if completed {
+            Ok(())
+        } else {
+            Err(Error::WindowsApi("Share cancelled".to_string()))
+        }
     }
 
+    /// Opens the native share UI to share a file.
     pub fn share_file(&self, url: String, options: ShareFileOptions) -> crate::Result<()> {
         // Get the window handle from Tauri
         let window = self
@@ -121,8 +151,9 @@ impl<R: Runtime> ShareKit<R> {
         // Get DataTransferManager bound to our HWND
         let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
 
-        // Create a channel to signal when DataRequested has been called
-        let (tx, rx) = mpsc::channel::<Result<(), String>>();
+        // Create channels for signaling
+        let (setup_tx, setup_rx) = mpsc::channel::<Result<(), String>>();
+        let (complete_tx, complete_rx) = mpsc::channel::<bool>(); // true = completed, false = cancelled
 
         // Set up the DataRequested handler
         let path = HSTRING::from(url);
@@ -150,12 +181,26 @@ impl<R: Runtime> ShareKit<R> {
                                 vec![Some(storage_item)].into();
 
                             data.SetStorageItemsReadOnly(&storage_items)?;
+
+                            // Set up ShareCompleted handler
+                            let tx_completed = complete_tx.clone();
+                            data.ShareCompleted(&TypedEventHandler::new(move |_, _| {
+                                let _ = tx_completed.send(true);
+                                Ok(())
+                            }))?;
+
+                            // Set up ShareCanceled handler
+                            let tx_canceled = complete_tx.clone();
+                            data.ShareCanceled(&TypedEventHandler::new(move |_, _| {
+                                let _ = tx_canceled.send(false);
+                                Ok(())
+                            }))?;
                         }
                         Ok(())
                     })();
 
-                    // Always signal completion with result
-                    let _ = tx.send(result.map_err(|e| e.to_string()));
+                    // Signal setup completion with result
+                    let _ = setup_tx.send(result.map_err(|e| e.to_string()));
 
                     Ok(())
                 },
@@ -167,9 +212,27 @@ impl<R: Runtime> ShareKit<R> {
             interop.ShowShareUIForWindow(hwnd)?;
         }
 
-        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()));
+        // Wait for setup to complete and check for errors
+        let setup_result = setup_rx
+            .recv()
+            .map_err(|e| Error::WindowsApi(e.to_string()))
+            .and_then(|r| r.map_err(Error::WindowsApi));
+
+        if let Err(e) = setup_result {
+            let _ = dtm.RemoveDataRequested(token);
+            return Err(e);
+        }
+
+        // Wait for share to complete or be cancelled
+        let completed = complete_rx
+            .recv()
+            .map_err(|e| Error::WindowsApi(e.to_string()))?;
         let _ = dtm.RemoveDataRequested(token);
 
-        handler_result?.map_err(Error::WindowsApi)
+        if completed {
+            Ok(())
+        } else {
+            Err(Error::WindowsApi("Share cancelled".to_string()))
+        }
     }
 }
