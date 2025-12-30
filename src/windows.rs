@@ -69,11 +69,14 @@ impl<R: Runtime> ShareKit<R> {
 
         // Set up the DataRequested handler
         let content = HSTRING::from(text);
+        let app_name = HSTRING::from(self.app.package_info().name.clone());
         let handler: TypedEventHandler<DataTransferManager, DataRequestedEventArgs> =
             TypedEventHandler::new(
                 move |_, args: windows::core::Ref<'_, DataRequestedEventArgs>| {
                     if let Some(args) = args.as_ref() {
                         let data = args.Request()?.Data()?;
+                        // Title is required for Windows share to work properly
+                        data.Properties()?.SetTitle(&app_name)?;
                         data.SetText(&content)?;
                     }
 
@@ -119,6 +122,7 @@ impl<R: Runtime> ShareKit<R> {
 
         // Set up the DataRequested handler
         let path = HSTRING::from(url);
+        let app_name = self.app.package_info().name.clone();
         let handler: TypedEventHandler<DataTransferManager, DataRequestedEventArgs> =
             TypedEventHandler::new(
                 move |_, args: windows::core::Ref<'_, DataRequestedEventArgs>| {
@@ -127,9 +131,9 @@ impl<R: Runtime> ShareKit<R> {
                         let request = args.Request()?;
                         let data = request.Data()?;
 
-                        if let Some(ref title) = options.title {
-                            data.Properties()?.SetTitle(&HSTRING::from(title))?;
-                        }
+                        // Title is required for Windows share to work properly
+                        let title = options.title.as_deref().unwrap_or(&app_name);
+                        data.Properties()?.SetTitle(&HSTRING::from(title))?;
 
                         // Convert path -> StorageFile
                         let file = StorageFile::GetFileFromPathAsync(&path)?.get()?;
