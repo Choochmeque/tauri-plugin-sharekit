@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { convertFileSrc } from "@tauri-apps/api/core";
   import {
     shareText,
     shareFile,
@@ -8,6 +9,10 @@
     onSharedContent,
     type SharedContent
   } from "@choochmeque/tauri-plugin-sharekit-api";
+
+  function isImage(mimeType?: string): boolean {
+    return mimeType?.startsWith("image/") ?? false;
+  }
 
   // Text sharing state
   let text = $state("Hello from Tauri ShareKit!");
@@ -94,6 +99,9 @@
         <ul>
           {#each receivedContent.files as file}
             <li>
+              {#if isImage(file.mimeType)}
+                <img src={convertFileSrc(file.path)} alt={file.name} class="preview-image" />
+              {/if}
               <strong>{file.name}</strong>
               <br /><small>Path: {file.path}</small>
               {#if file.mimeType}<br /><small>MIME: {file.mimeType}</small>{/if}
@@ -199,6 +207,14 @@
 
   .card.received p {
     word-break: break-all;
+  }
+
+  .preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    display: block;
   }
 
   .form-group {
