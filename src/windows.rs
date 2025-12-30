@@ -235,4 +235,12 @@ impl<R: Runtime> ShareKit<R> {
             Err(Error::WindowsApi("Share cancelled".to_string()))
         }
     }
+
+    pub fn get_pending_shared_content(&self) -> crate::Result<Option<SharedContent>> {
+        Ok(None)
+    }
+
+    pub fn clear_pending_shared_content(&self) -> crate::Result<()> {
+        Ok(())
+    }
 }

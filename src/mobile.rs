@@ -39,4 +39,16 @@ impl<R: Runtime> ShareKit<R> {
             .run_mobile_plugin("shareFile", ShareFilePayload { url, options })
             .map_err(Into::into)
     }
+
+    pub fn get_pending_shared_content(&self) -> crate::Result<Option<SharedContent>> {
+        self.0
+            .run_mobile_plugin("getPendingSharedContent", ())
+            .map_err(Into::into)
+    }
+
+    pub fn clear_pending_shared_content(&self) -> crate::Result<()> {
+        self.0
+            .run_mobile_plugin("clearPendingSharedContent", ())
+            .map_err(Into::into)
+    }
 }
