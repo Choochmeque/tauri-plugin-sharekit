@@ -76,6 +76,78 @@ await shareFile('file:///path/to/document.pdf', {
 });
 ```
 
+### Receiving Shared Content (Share Target)
+
+Your app can receive content shared from other apps:
+
+```javascript
+import {
+  getPendingSharedContent,
+  clearPendingSharedContent,
+  onSharedContent
+} from "@choochmeque/tauri-plugin-sharekit-api";
+
+// Check for shared content on app startup (cold start)
+const content = await getPendingSharedContent();
+if (content) {
+  if (content.type === 'text') {
+    console.log('Received text:', content.text);
+  } else if (content.type === 'files') {
+    for (const file of content.files) {
+      console.log('Received file:', file.name, file.path);
+    }
+  }
+  await clearPendingSharedContent();
+}
+
+// Listen for shares while app is running (warm start)
+const unlisten = await onSharedContent((content) => {
+  console.log('Received:', content);
+});
+```
+
+## Platform Setup
+
+### Android
+
+To receive shared content on Android, add intent filters to your `AndroidManifest.xml`:
+
+`src-tauri/gen/android/app/src/main/AndroidManifest.xml`
+
+Add these intent filters inside your `<activity>` tag:
+
+```xml
+<!-- Receive text shares -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="text/*" />
+</intent-filter>
+
+<!-- Receive image shares -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="image/*" />
+</intent-filter>
+
+<!-- Receive any file -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="*/*" />
+</intent-filter>
+
+<!-- Receive multiple files -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND_MULTIPLE" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="*/*" />
+</intent-filter>
+```
+
+You can customize the `mimeType` values to only accept specific file types.
+
 ## Contributing
 
 PRs accepted. Please make sure to read the Contributing Guide before making a pull request.

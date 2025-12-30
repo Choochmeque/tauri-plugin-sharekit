@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { shareText, shareFile } from "@choochmeque/tauri-plugin-sharekit-api";
+  import { onMount } from "svelte";
+  import {
+    shareText,
+    shareFile,
+    getPendingSharedContent,
+    clearPendingSharedContent,
+    onSharedContent,
+    type SharedContent
+  } from "@choochmeque/tauri-plugin-sharekit-api";
 
   // Text sharing state
   let text = $state("Hello from Tauri ShareKit!");
@@ -11,6 +19,37 @@
   let fileMimeType = $state("");
   let fileTitle = $state("");
   let fileStatus = $state("");
+
+  // Received content state
+  let receivedContent = $state<SharedContent | null>(null);
+
+  onMount(async () => {
+    // Check for content from cold start
+    await checkForSharedContent();
+
+    // Listen for content from warm start
+    const listener = await onSharedContent((content) => {
+      receivedContent = content;
+    });
+
+    return () => listener.unregister();
+  });
+
+  async function checkForSharedContent() {
+    try {
+      const content = await getPendingSharedContent();
+      if (content) {
+        receivedContent = content;
+      }
+    } catch (e) {
+      console.error("Failed to get shared content:", e);
+    }
+  }
+
+  async function handleClearSharedContent() {
+    await clearPendingSharedContent();
+    receivedContent = null;
+  }
 
   async function handleShareText() {
     textStatus = "Sharing...";
@@ -43,6 +82,29 @@
 
 <main class="container">
   <h1>ShareKit Demo</h1>
+
+  {#if receivedContent}
+    <section class="card received">
+      <h2>Received Content</h2>
+      <p><strong>Type:</strong> {receivedContent.type}</p>
+      {#if receivedContent.type === "text" && receivedContent.text}
+        <p><strong>Text:</strong> {receivedContent.text}</p>
+      {:else if receivedContent.type === "files" && receivedContent.files}
+        <p><strong>Files:</strong></p>
+        <ul>
+          {#each receivedContent.files as file}
+            <li>
+              <strong>{file.name}</strong>
+              <br /><small>Path: {file.path}</small>
+              {#if file.mimeType}<br /><small>MIME: {file.mimeType}</small>{/if}
+              {#if file.size}<br /><small>Size: {file.size} bytes</small>{/if}
+            </li>
+          {/each}
+        </ul>
+      {/if}
+      <button onclick={handleClearSharedContent}>Clear</button>
+    </section>
+  {/if}
 
   <section class="card">
     <h2>Share Text</h2>
@@ -120,6 +182,25 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
+  .card.received {
+    border: 2px solid #396cd8;
+    background: #e8f0fe;
+  }
+
+  .card.received ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .card.received li {
+    margin-bottom: 0.5rem;
+    word-break: break-all;
+  }
+
+  .card.received p {
+    word-break: break-all;
+  }
+
   .form-group {
     margin-bottom: 1rem;
   }
@@ -189,6 +270,11 @@
     .card {
       background: #3f3f3f;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card.received {
+      background: #2a3a5c;
+      border-color: #5a8cfa;
     }
 
     input, textarea {
