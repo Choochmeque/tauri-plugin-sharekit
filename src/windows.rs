@@ -65,7 +65,7 @@ impl<R: Runtime> ShareKit<R> {
         let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
 
         // Create a channel to signal when DataRequested has been called
-        let (tx, rx) = mpsc::channel::<()>();
+        let (tx, rx) = mpsc::channel::<Result<(), String>>();
 
         // Set up the DataRequested handler
         let content = HSTRING::from(text);
@@ -73,15 +73,20 @@ impl<R: Runtime> ShareKit<R> {
         let handler: TypedEventHandler<DataTransferManager, DataRequestedEventArgs> =
             TypedEventHandler::new(
                 move |_, args: windows::core::Ref<'_, DataRequestedEventArgs>| {
-                    if let Some(args) = args.as_ref() {
-                        let data = args.Request()?.Data()?;
-                        // Title is required for Windows share to work properly
-                        data.Properties()?.SetTitle(&app_name)?;
-                        data.SetText(&content)?;
-                    }
+                    let result = (|| -> windows::core::Result<()> {
+                        if let Some(args) = args.as_ref() {
+                            let data = args.Request()?.Data()?;
+                            let props = data.Properties()?;
+                            // Title and Description are required for Windows share to work properly
+                            props.SetTitle(&app_name)?;
+                            props.SetDescription(&content)?;
+                            data.SetText(&content)?;
+                        }
+                        Ok(())
+                    })();
 
-                    // Signal that the callback has been executed
-                    let _ = tx.send(());
+                    // Always signal completion with result
+                    let _ = tx.send(result.map_err(|e| e.to_string()));
 
                     Ok(())
                 },
@@ -93,7 +98,8 @@ impl<R: Runtime> ShareKit<R> {
             interop.ShowShareUIForWindow(hwnd)?;
         }
 
-        let _ = rx.recv();
+        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()))?;
+        handler_result.map_err(Error::WindowsApi)?;
 
         let _ = dtm.RemoveDataRequested(token);
 
@@ -118,7 +124,7 @@ impl<R: Runtime> ShareKit<R> {
         let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
 
         // Create a channel to signal when DataRequested has been called
-        let (tx, rx) = mpsc::channel::<()>();
+        let (tx, rx) = mpsc::channel::<Result<(), String>>();
 
         // Set up the DataRequested handler
         let path = HSTRING::from(url);
@@ -126,27 +132,32 @@ impl<R: Runtime> ShareKit<R> {
         let handler: TypedEventHandler<DataTransferManager, DataRequestedEventArgs> =
             TypedEventHandler::new(
                 move |_, args: windows::core::Ref<'_, DataRequestedEventArgs>| {
-                    let args = args.as_ref();
-                    if let Some(args) = args {
-                        let request = args.Request()?;
-                        let data = request.Data()?;
+                    let result = (|| -> windows::core::Result<()> {
+                        let args = args.as_ref();
+                        if let Some(args) = args {
+                            let request = args.Request()?;
+                            let data = request.Data()?;
 
-                        // Title is required for Windows share to work properly
-                        let title = options.title.as_deref().unwrap_or(&app_name);
-                        data.Properties()?.SetTitle(&HSTRING::from(title))?;
+                            // Title and Description are required for Windows share to work properly
+                            let title = options.title.as_deref().unwrap_or(&app_name);
+                            let props = data.Properties()?;
+                            props.SetTitle(&HSTRING::from(title))?;
+                            props.SetDescription(&HSTRING::from(title))?;
 
-                        // Convert path -> StorageFile
-                        let file = StorageFile::GetFileFromPathAsync(&path)?.get()?;
+                            // Convert path -> StorageFile
+                            let file = StorageFile::GetFileFromPathAsync(&path)?.get()?;
 
-                        let storage_item = file.cast::<IStorageItem>()?;
-                        let storage_items: IIterable<IStorageItem> =
-                            vec![Some(storage_item)].into();
+                            let storage_item = file.cast::<IStorageItem>()?;
+                            let storage_items: IIterable<IStorageItem> =
+                                vec![Some(storage_item)].into();
 
-                        data.SetStorageItemsReadOnly(&storage_items)?;
-                    }
+                            data.SetStorageItemsReadOnly(&storage_items)?;
+                        }
+                        Ok(())
+                    })();
 
-                    // Signal that the callback has been executed
-                    let _ = tx.send(());
+                    // Always signal completion with result
+                    let _ = tx.send(result.map_err(|e| e.to_string()));
 
                     Ok(())
                 },
@@ -158,7 +169,8 @@ impl<R: Runtime> ShareKit<R> {
             interop.ShowShareUIForWindow(hwnd)?;
         }
 
-        let _ = rx.recv();
+        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()))?;
+        handler_result.map_err(Error::WindowsApi)?;
 
         let _ = dtm.RemoveDataRequested(token);
 
