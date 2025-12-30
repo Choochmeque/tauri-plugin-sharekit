@@ -28,42 +28,62 @@
   // Received content state
   let receivedContent = $state<SharedContent | null>(null);
 
+  // Log output
+  let logs = $state("");
+
+  function log(message: string | object) {
+    logs += `[${new Date().toLocaleTimeString()}] ${typeof message === 'string' ? message : JSON.stringify(message, null, 2)}\n\n`;
+  }
+
   onMount(async () => {
+    log("App mounted");
+
     // Check for content from cold start
     await checkForSharedContent();
 
     // Listen for content from warm start
     const listener = await onSharedContent((content) => {
+      log("Received shared content: " + JSON.stringify(content, null, 2));
       receivedContent = content;
     });
+
+    log("Listener registered");
 
     return () => listener.unregister();
   });
 
   async function checkForSharedContent() {
+    log("Checking for pending shared content...");
     try {
       const content = await getPendingSharedContent();
       if (content) {
+        log("Found pending content: " + JSON.stringify(content, null, 2));
         receivedContent = content;
+      } else {
+        log("No pending content");
       }
     } catch (e) {
-      console.error("Failed to get shared content:", e);
+      log("Failed to get shared content: " + e);
     }
   }
 
   async function handleClearSharedContent() {
+    log("Clearing shared content");
     await clearPendingSharedContent();
     receivedContent = null;
   }
 
   async function handleShareText() {
     textStatus = "Sharing...";
+    log("Sharing text: " + text.substring(0, 50) + (text.length > 50 ? "..." : ""));
     try {
       const options = textMimeType ? { mimeType: textMimeType } : undefined;
       await shareText(text, options);
       textStatus = "Shared successfully!";
+      log("Text shared successfully");
     } catch (e) {
       textStatus = `Error: ${e}`;
+      log("Share text failed: " + e);
     }
   }
 
@@ -73,14 +93,17 @@
       return;
     }
     fileStatus = "Sharing...";
+    log("Sharing file: " + fileUrl);
     try {
       const options: { mimeType?: string; title?: string } = {};
       if (fileMimeType) options.mimeType = fileMimeType;
       if (fileTitle) options.title = fileTitle;
       await shareFile(fileUrl, Object.keys(options).length ? options : undefined);
       fileStatus = "Shared successfully!";
+      log("File shared successfully");
     } catch (e) {
       fileStatus = `Error: ${e}`;
+      log("Share file failed: " + e);
     }
   }
 </script>
@@ -148,6 +171,12 @@
     {#if fileStatus}
       <p class="status" class:error={fileStatus.startsWith("Error")}>{fileStatus}</p>
     {/if}
+  </section>
+
+  <section class="card">
+    <h2>Log Output</h2>
+    <pre class="log-box">{logs || 'No activity yet...'}</pre>
+    <button onclick={() => logs = ''}>Clear Log</button>
   </section>
 </main>
 
@@ -275,6 +304,22 @@
   .status.error {
     background: #f8d7da;
     color: #721c24;
+  }
+
+  .log-box {
+    background: #1a1a1a;
+    color: #c9d1d9;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #333;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.4;
+    margin-bottom: 1rem;
   }
 
   @media (prefers-color-scheme: dark) {

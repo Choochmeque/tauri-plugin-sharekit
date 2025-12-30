@@ -1,4 +1,8 @@
-import { invoke, addPluginListener, PluginListener } from "@tauri-apps/api/core";
+import {
+  invoke,
+  addPluginListener,
+  PluginListener,
+} from "@tauri-apps/api/core";
 
 export interface ShareTextOptions {
   // Android only
