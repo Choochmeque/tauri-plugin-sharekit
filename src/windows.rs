@@ -98,12 +98,10 @@ impl<R: Runtime> ShareKit<R> {
             interop.ShowShareUIForWindow(hwnd)?;
         }
 
-        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()))?;
-        handler_result.map_err(Error::WindowsApi)?;
-
+        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()));
         let _ = dtm.RemoveDataRequested(token);
 
-        Ok(())
+        handler_result?.map_err(Error::WindowsApi)
     }
 
     pub fn share_file(&self, url: String, options: ShareFileOptions) -> crate::Result<()> {
@@ -169,11 +167,9 @@ impl<R: Runtime> ShareKit<R> {
             interop.ShowShareUIForWindow(hwnd)?;
         }
 
-        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()))?;
-        handler_result.map_err(Error::WindowsApi)?;
-
+        let handler_result = rx.recv().map_err(|e| Error::WindowsApi(e.to_string()));
         let _ = dtm.RemoveDataRequested(token);
 
-        Ok(())
+        handler_result?.map_err(Error::WindowsApi)
     }
 }
