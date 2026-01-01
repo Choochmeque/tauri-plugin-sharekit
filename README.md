@@ -148,6 +148,39 @@ Add these intent filters inside your `<activity>` tag:
 
 You can customize the `mimeType` values to only accept specific file types.
 
+### iOS
+
+To receive shared content on iOS, you need to add a Share Extension. Use the `@choochmeque/tauri-apple-extensions` tool after initializing your iOS project:
+
+```bash
+# First, initialize the iOS project if you haven't already
+tauri ios init
+
+# Then add the Share Extension
+npx @choochmeque/tauri-apple-extensions add share --plugin @choochmeque/tauri-plugin-sharekit-api
+```
+
+The setup tool will:
+1. Create a Share Extension target in your Xcode project
+2. Configure App Groups for communication between the extension and main app
+3. Add a URL scheme for the extension to open your app
+
+**After running the script, you must:**
+
+1. Open the Xcode project (`src-tauri/gen/apple/*.xcodeproj`)
+2. Select your Apple Developer Team for both targets:
+   - Main app target (e.g., `myapp_iOS`)
+   - Share Extension target (e.g., `myapp-ShareExtension`)
+3. Enable the "App Groups" capability for **both** targets in Xcode
+4. In Apple Developer Portal, create the App Group (e.g., `group.com.your.app`) and add it to both App IDs
+
+**App Group Configuration:**
+
+The extension and main app communicate via App Groups. The setup script uses `group.{your.bundle.id}` as the App Group identifier. Make sure this is configured in:
+- Apple Developer Portal (create the App Group)
+- Both App IDs (main app and extension)
+- Xcode capabilities for both targets
+
 ### Displaying Received Images
 
 To display received images in your app, enable the asset protocol feature and configure the scope.
@@ -167,12 +200,18 @@ tauri = { version = "2", features = ["protocol-asset"] }
     "security": {
       "assetProtocol": {
         "enable": true,
-        "scope": ["$CACHE/**", "$APPCACHE/**"]
+        "scope": [
+          "$CACHE/**",
+          "$APPCACHE/**",
+          "**/Containers/Shared/AppGroup/**"
+        ]
       }
     }
   }
 }
 ```
+
+The `**/Containers/Shared/AppGroup/**` scope is required on iOS to access files shared via the Share Extension (works for both simulator and real devices).
 
 Then in your frontend:
 

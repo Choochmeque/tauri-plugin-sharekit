@@ -18,6 +18,9 @@ importers:
         specifier: ^2
         version: 2.5.2
     devDependencies:
+      '@choochmeque/tauri-apple-extensions':
+        specifier: ^0.1.2
+        version: 0.1.2
       '@sveltejs/adapter-static':
         specifier: ^3.0.6
         version: 3.0.10(@sveltejs/kit@2.49.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1))(svelte@5.46.1)(vite@6.4.1))
@@ -44,6 +47,11 @@ importers:
         version: 6.4.1
 
 packages:
+
+  '@choochmeque/tauri-apple-extensions@0.1.2':
+    resolution: {integrity: sha512-bkPspHWV0IogLiorJaol2Kzm5IFeAD1eSO1M/AQRtikgWGoi7b08YOdGXz0hVz5UnNsU3O5ZtVrgAYSckrdCQQ==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   '@choochmeque/tauri-plugin-sharekit-api@file:../..':
     resolution: {directory: ../.., type: directory}
@@ -478,6 +486,10 @@ packages:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
 
+  commander@14.0.2:
+    resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
+    engines: {node: '>=20'}
+
   cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
@@ -664,6 +676,10 @@ packages:
     resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
 
 snapshots:
+
+  '@choochmeque/tauri-apple-extensions@0.1.2':
+    dependencies:
+      commander: 14.0.2
 
   '@choochmeque/tauri-plugin-sharekit-api@file:../..':
     dependencies:
@@ -953,6 +969,8 @@ snapshots:
       readdirp: 4.1.2
 
   clsx@2.1.1: {}
+
+  commander@14.0.2: {}
 
   cookie@0.6.0: {}
 

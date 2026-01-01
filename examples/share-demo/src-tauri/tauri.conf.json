@@ -21,7 +21,11 @@
       "csp": null,
       "assetProtocol": {
         "enable": true,
-        "scope": ["$CACHE/**", "$APPCACHE/**"]
+        "scope": [
+          "$CACHE/**",
+          "$APPCACHE/**",
+          "**/Containers/Shared/AppGroup/**"
+        ]
       }
     }
   },
