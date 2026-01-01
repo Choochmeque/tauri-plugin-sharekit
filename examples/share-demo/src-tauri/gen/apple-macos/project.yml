@@ -1,0 +1,48 @@
+name: share-demo
+options:
+  bundleIdPrefix: com.tauri
+  deploymentTarget:
+    macOS: "11.0"
+fileGroups: [../../src]
+configs:
+  debug: debug
+  release: release
+settingGroups:
+  app:
+    base:
+      PRODUCT_NAME: share-demo
+      PRODUCT_BUNDLE_IDENTIFIER: com.tauri.dev
+targets:
+  share-demo_macOS:
+    type: application
+    platform: macOS
+    sources:
+      - path: Assets.xcassets
+      - path: share-demo_macOS
+    info:
+      path: share-demo_macOS/Info.plist
+      properties:
+        CFBundleShortVersionString: 0.1.0
+        CFBundleVersion: 0.1.0
+        LSMinimumSystemVersion: "11.0"
+        NSHighResolutionCapable: true
+    entitlements:
+      path: share-demo_macOS/share-demo_macOS.entitlements
+    settings:
+      base:
+        ARCHS: [arm64, x86_64]
+        VALID_ARCHS: [arm64, x86_64]
+        CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION: YES
+      groups: [app]
+    dependencies:
+      - sdk: AppKit.framework
+      - sdk: CoreGraphics.framework
+      - sdk: Metal.framework
+      - sdk: MetalKit.framework
+      - sdk: QuartzCore.framework
+      - sdk: Security.framework
+      - sdk: WebKit.framework
+    postCompileScripts:
+      - script: ${PROJECT_DIR}/scripts/build-rust.sh ${CONFIGURATION} "${ARCHS}"
+        name: Build and Copy Rust Binary
+        basedOnDependencyAnalysis: false
