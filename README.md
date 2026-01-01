@@ -157,7 +157,7 @@ To receive shared content on iOS, you need to add a Share Extension. Use the `@c
 tauri ios init
 
 # Then add the Share Extension
-npx @choochmeque/tauri-apple-extensions add share --plugin @choochmeque/tauri-plugin-sharekit-api
+npx @choochmeque/tauri-apple-extensions ios add share --plugin @choochmeque/tauri-plugin-sharekit-api
 ```
 
 The setup tool will:
@@ -180,6 +180,41 @@ The extension and main app communicate via App Groups. The setup script uses `gr
 - Apple Developer Portal (create the App Group)
 - Both App IDs (main app and extension)
 - Xcode capabilities for both targets
+
+### macOS
+
+To receive shared content on macOS, you need to add a Share Extension. First, create the macOS Xcode project, then add the extension:
+
+```bash
+# First, create the macOS Xcode project
+npx @choochmeque/tauri-macos-xcode init
+
+# Then add the Share Extension
+npx @choochmeque/tauri-apple-extensions macos add share --plugin @choochmeque/tauri-plugin-sharekit-api
+```
+
+The setup tool will:
+1. Create a Share Extension target in your Xcode project
+2. Configure App Groups for communication between the extension and main app
+3. Add a URL scheme for the extension to open your app
+
+**After running the script, you must:**
+
+1. Open the Xcode project (`src-tauri/gen/apple-macos/*.xcodeproj`)
+2. Select your Apple Developer Team for both targets:
+   - Main app target (e.g., `myapp_macOS`)
+   - Share Extension target (e.g., `myapp-ShareExtension`)
+3. Enable the "App Groups" capability for **both** targets in Xcode
+4. In Apple Developer Portal, create the App Group (e.g., `group.com.your.app`) and add it to both App IDs
+
+**Development workflow:**
+
+```bash
+# Start the dev server and open Xcode
+pnpm tauri:macos:dev
+
+# Then press Cmd+R in Xcode to build and run
+```
 
 ### Displaying Received Images
 

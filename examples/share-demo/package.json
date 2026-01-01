@@ -19,7 +19,7 @@
     "@tauri-apps/plugin-opener": "^2"
   },
   "devDependencies": {
-    "@choochmeque/tauri-apple-extensions": "^0.1.2",
+    "@choochmeque/tauri-apple-extensions": "^0.2.2",
     "@choochmeque/tauri-macos-xcode": "^0.1.0",
     "@sveltejs/adapter-static": "^3.0.6",
     "@sveltejs/kit": "^2.9.0",

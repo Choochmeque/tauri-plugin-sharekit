@@ -35,11 +35,15 @@
   },
   "tauri-apple-extension": {
     "type": "share",
-    "templates": "./ios/templates"
+    "templates": {
+      "ios": "./ios/templates",
+      "macos": "./macos/templates"
+    }
   },
   "files": [
     "dist-js",
     "ios/templates",
+    "macos/templates",
     "README.md"
   ],
   "directories": {

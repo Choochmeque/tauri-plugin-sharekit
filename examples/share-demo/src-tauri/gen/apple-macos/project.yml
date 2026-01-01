@@ -22,6 +22,10 @@ targets:
     info:
       path: share-demo_macOS/Info.plist
       properties:
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tauri.dev
+            CFBundleURLSchemes:
+              - sharedemo
         CFBundleShortVersionString: 0.1.0
         CFBundleVersion: 0.1.0
         LSMinimumSystemVersion: "11.0"
@@ -35,6 +39,9 @@ targets:
         CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION: YES
       groups: [app]
     dependencies:
+      - target: share-demo-ShareExtension
+        embed: true
+        codeSign: true
       - sdk: AppKit.framework
       - sdk: CoreGraphics.framework
       - sdk: Metal.framework
@@ -46,3 +53,46 @@ targets:
       - script: ${PROJECT_DIR}/scripts/build-rust.sh ${CONFIGURATION} "${ARCHS}"
         name: Build and Copy Rust Binary
         basedOnDependencyAnalysis: false
+
+  share-demo-ShareExtension:
+    type: app-extension
+    platform: macOS
+    deploymentTarget: "11.0"
+    sources:
+      - path: ShareExtension
+    info:
+      path: ShareExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Share
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "0.1.0"
+        NSExtension:
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsFileWithMaxCount: 10
+              NSExtensionActivationSupportsImageWithMaxCount: 10
+              NSExtensionActivationSupportsMovieWithMaxCount: 10
+              NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tauri.dev.ShareExtension
+        SKIP_INSTALL: YES
+        CODE_SIGN_ENTITLEMENTS: ShareExtension/ShareExtension.entitlements
+        CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION: YES
+
+schemes:
+  share-demo_macOS:
+    build:
+      targets:
+        share-demo_macOS: all
+    run:
+      config: debug
+    profile:
+      config: release
+    analyze:
+      config: debug
+    archive:
+      config: release

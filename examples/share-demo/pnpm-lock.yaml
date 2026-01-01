@@ -19,8 +19,8 @@ importers:
         version: 2.5.2
     devDependencies:
       '@choochmeque/tauri-apple-extensions':
-        specifier: ^0.1.2
-        version: 0.1.2
+        specifier: ^0.2.2
+        version: 0.2.2
       '@choochmeque/tauri-macos-xcode':
         specifier: ^0.1.0
         version: 0.1.2
@@ -51,8 +51,8 @@ importers:
 
 packages:
 
-  '@choochmeque/tauri-apple-extensions@0.1.2':
-    resolution: {integrity: sha512-bkPspHWV0IogLiorJaol2Kzm5IFeAD1eSO1M/AQRtikgWGoi7b08YOdGXz0hVz5UnNsU3O5ZtVrgAYSckrdCQQ==}
+  '@choochmeque/tauri-apple-extensions@0.2.2':
+    resolution: {integrity: sha512-J4UtVipi4NvIZNfPTTzP2W+yrskanr3+Y61ATtEpB1XF6ScJQ267KFpaDpMvFGR6jIEoXRxyOaCJsMs6Edp8ng==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -840,7 +840,7 @@ packages:
 
 snapshots:
 
-  '@choochmeque/tauri-apple-extensions@0.1.2':
+  '@choochmeque/tauri-apple-extensions@0.2.2':
     dependencies:
       commander: 14.0.2
 
