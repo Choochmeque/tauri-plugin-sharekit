@@ -21,4 +21,12 @@ impl<R: Runtime> ShareKit<R> {
     pub fn share_file(&self, _url: String, _options: ShareFileOptions) -> crate::Result<()> {
         Err(crate::Error::UnsupportedPlatform)
     }
+
+    pub fn get_pending_shared_content(&self) -> crate::Result<Option<SharedContent>> {
+        Err(crate::Error::UnsupportedPlatform)
+    }
+
+    pub fn clear_pending_shared_content(&self) -> crate::Result<()> {
+        Err(crate::Error::UnsupportedPlatform)
+    }
 }

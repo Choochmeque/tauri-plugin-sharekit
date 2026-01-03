@@ -16,6 +16,8 @@ mod windows;
 
 mod commands;
 mod error;
+#[cfg(desktop)]
+mod listeners;
 mod models;
 
 pub use error::{Error, Result};
@@ -45,9 +47,17 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("sharekit")
         .invoke_handler(tauri::generate_handler![
             commands::share_text,
-            commands::share_file
+            commands::share_file,
+            commands::get_pending_shared_content,
+            commands::clear_pending_shared_content,
+            #[cfg(desktop)]
+            listeners::register_listener,
+            #[cfg(desktop)]
+            listeners::remove_listener,
         ])
         .setup(|app, api| {
+            #[cfg(desktop)]
+            listeners::init();
             #[cfg(mobile)]
             let share = mobile::init(app, api)?;
             #[cfg(all(desktop, not(target_os = "macos"), not(target_os = "windows")))]

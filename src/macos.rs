@@ -144,4 +144,12 @@ impl<R: Runtime> ShareKit<R> {
 
         Ok(())
     }
+
+    pub fn get_pending_shared_content(&self) -> crate::Result<Option<SharedContent>> {
+        Ok(None)
+    }
+
+    pub fn clear_pending_shared_content(&self) -> crate::Result<()> {
+        Ok(())
+    }
 }
