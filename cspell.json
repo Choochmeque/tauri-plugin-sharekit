@@ -26,7 +26,12 @@
     "thiserror",
     "HSTRING",
     "SINGLETHREADED",
-    "NSURL"
+    "NSURL",
+    "xcodeproj",
+    "myapp",
+    "msix",
+    "APPCACHE",
+    "APPMODEL"
   ],
   "useGitignore": true,
   "ignorePaths": [
