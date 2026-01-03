@@ -31,7 +31,8 @@
     "myapp",
     "msix",
     "APPCACHE",
-    "APPMODEL"
+    "APPMODEL",
+    "unlisten"
   ],
   "useGitignore": true,
   "ignorePaths": [
