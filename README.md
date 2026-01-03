@@ -216,6 +216,46 @@ pnpm tauri:macos:dev
 # Then press Cmd+R in Xcode to build and run
 ```
 
+### Windows
+
+To receive shared content on Windows, your app must be packaged as MSIX.
+
+**Requirements:**
+- Windows 10 version 2004+ (build 19041)
+- MSIX packaging (use [@choochmeque/tauri-windows-bundle](https://github.com/Choochmeque/tauri-windows-bundle))
+
+**Setup:**
+
+1. Initialize Windows bundle (if not already done) and add share target extension:
+
+```bash
+npx @choochmeque/tauri-windows-bundle init
+npx @choochmeque/tauri-windows-bundle extension add share-target
+```
+
+2. Add share target handling to your Tauri setup:
+
+`src-tauri/src/main.rs`
+
+```rust
+fn main() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_sharekit::init())
+        .setup(|app| {
+            #[cfg(target_os = "windows")]
+            {
+                use tauri_plugin_sharekit::ShareExt;
+                if app.share().handle_share_activation()? {
+                    app.handle().exit(0);
+                }
+            }
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
+```
+
 ### Displaying Received Images
 
 To display received images in your app, enable the asset protocol feature and configure the scope.
