@@ -25,6 +25,12 @@ struct DiagnosticSpan: Codable {
     let is_primary: Bool
 }
 
+// MARK: - Tauri Config Types
+
+struct TauriConfig: Codable {
+    let identifier: String?
+}
+
 // MARK: - Environment
 
 struct BuildEnvironment {
@@ -35,6 +41,7 @@ struct BuildEnvironment {
     let builtProductsDir: String
     let executablePath: String
     let executableFolderPath: String
+    let productBundleIdentifier: String
 
     var isRelease: Bool {
         configuration.lowercased() == "release"
@@ -52,7 +59,8 @@ struct BuildEnvironment {
             projectRoot: ProcessInfo.processInfo.environment["PROJECT_ROOT"] ?? "",
             builtProductsDir: ProcessInfo.processInfo.environment["BUILT_PRODUCTS_DIR"] ?? "",
             executablePath: ProcessInfo.processInfo.environment["EXECUTABLE_PATH"] ?? "",
-            executableFolderPath: ProcessInfo.processInfo.environment["EXECUTABLE_FOLDER_PATH"] ?? ""
+            executableFolderPath: ProcessInfo.processInfo.environment["EXECUTABLE_FOLDER_PATH"] ?? "",
+            productBundleIdentifier: ProcessInfo.processInfo.environment["PRODUCT_BUNDLE_IDENTIFIER"] ?? ""
         )
     }
 }
@@ -118,6 +126,41 @@ func getBinaryName(projectRoot: String) -> String? {
     }
 
     return String(content[range])
+}
+
+func validateBundleIdentifier(env: BuildEnvironment) -> Bool {
+    let tauriConfPath = "\(env.projectRoot)/tauri.conf.json"
+
+    guard let data = FileManager.default.contents(atPath: tauriConfPath) else {
+        xcodeError("tauri.conf.json not found at: \(tauriConfPath)")
+        return false
+    }
+
+    let config: TauriConfig
+    do {
+        config = try JSONDecoder().decode(TauriConfig.self, from: data)
+    } catch {
+        xcodeError("Failed to parse tauri.conf.json: \(error)", file: tauriConfPath)
+        return false
+    }
+
+    guard let tauriIdentifier = config.identifier else {
+        xcodeError("identifier field not found in tauri.conf.json", file: tauriConfPath)
+        return false
+    }
+
+    guard !env.productBundleIdentifier.isEmpty else {
+        xcodeError("PRODUCT_BUNDLE_IDENTIFIER not set in Xcode build settings")
+        return false
+    }
+
+    if tauriIdentifier != env.productBundleIdentifier {
+        xcodeError("Bundle identifier mismatch: tauri.conf.json has '\(tauriIdentifier)' but Xcode has '\(env.productBundleIdentifier)'", file: tauriConfPath)
+        xcodeNote("Update identifier in tauri.conf.json or regenerate the Xcode project")
+        return false
+    }
+
+    return true
 }
 
 // MARK: - Diagnostic Formatting
@@ -396,6 +439,11 @@ func main() -> Int32 {
     }
 
     let env = BuildEnvironment.fromEnvironment(configuration: args[1], archs: args[2])
+
+    // Validate bundle identifier matches tauri.conf.json
+    if !validateBundleIdentifier(env: env) {
+        return 1
+    }
 
     // Get binary name from Cargo.toml
     guard let binaryName = getBinaryName(projectRoot: env.projectRoot) else {
