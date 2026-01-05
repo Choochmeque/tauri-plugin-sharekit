@@ -22,7 +22,7 @@ Install the Core plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-sharekit = "0.2"
+tauri-plugin-sharekit = "0.3"
 # alternatively with Git:
 tauri-plugin-sharekit = { git = "https://github.com/Choochmeque/tauri-plugin-sharekit" }
 ```
