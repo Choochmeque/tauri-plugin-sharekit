@@ -21,8 +21,7 @@ serde_repr = "0.1"
 objc2 = "0.6"
 objc2-core-foundation = "0.3"
 objc2-foundation = { version = "0.3", features = ["NSString"] }
-objc2-app-kit = { version = "0.3", features = ["NSSharingService", "NSView", "NSResponder", "NSWindow"] }
-objc2-web-kit = "0.3"
+objc2-app-kit = { version = "0.3", features = ["NSSharingService", "NSView", "NSResponder"] }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = { version = "0.61", features = [
