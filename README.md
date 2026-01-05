@@ -74,6 +74,12 @@ await shareFile('file:///path/to/document.pdf', {
   mimeType: 'application/pdf',
   title: 'My Document'
 });
+
+// Share with position (iPad/macOS only)
+// x and y are in webview coordinates (pixels from top-left)
+await shareText('Hello!', {
+  position: { x: 100, y: 200, preferredEdge: 'bottom' }
+});
 ```
 
 ## Contributing

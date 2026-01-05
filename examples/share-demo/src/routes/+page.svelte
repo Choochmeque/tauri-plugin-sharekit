@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { shareText, shareFile } from "@choochmeque/tauri-plugin-sharekit-api";
+  import { shareText, shareFile, type SharePosition } from "@choochmeque/tauri-plugin-sharekit-api";
 
   // Text sharing state
   let text = $state("Hello from Tauri ShareKit!");
@@ -12,10 +12,19 @@
   let fileTitle = $state("");
   let fileStatus = $state("");
 
-  async function handleShareText() {
+  // Position state (iPad/macOS only)
+  let usePosition = $state(false);
+  let preferredEdge = $state<"top" | "bottom" | "left" | "right">("bottom");
+
+  async function handleShareText(event: MouseEvent) {
     textStatus = "Sharing...";
     try {
-      const options = textMimeType ? { mimeType: textMimeType } : undefined;
+      const position = usePosition
+        ? { x: event.clientX, y: event.clientY, preferredEdge }
+        : undefined;
+      const options = textMimeType || position
+        ? { mimeType: textMimeType || undefined, position }
+        : undefined;
       await shareText(text, options);
       textStatus = "Shared successfully!";
     } catch (e) {
@@ -23,16 +32,20 @@
     }
   }
 
-  async function handleShareFile() {
+  async function handleShareFile(event: MouseEvent) {
     if (!fileUrl) {
       fileStatus = "Please enter a file path";
       return;
     }
     fileStatus = "Sharing...";
     try {
-      const options: { mimeType?: string; title?: string } = {};
+      const position = usePosition
+        ? { x: event.clientX, y: event.clientY, preferredEdge }
+        : undefined;
+      const options: { mimeType?: string; title?: string; position?: SharePosition } = {};
       if (fileMimeType) options.mimeType = fileMimeType;
       if (fileTitle) options.title = fileTitle;
+      if (position) options.position = position;
       await shareFile(fileUrl, Object.keys(options).length ? options : undefined);
       fileStatus = "Shared successfully!";
     } catch (e) {
@@ -45,6 +58,27 @@
   <h1>ShareKit Demo</h1>
 
   <section class="card">
+    <h2>Position Settings (iPad/macOS)</h2>
+    <div class="form-group checkbox-group">
+      <label>
+        <input type="checkbox" bind:checked={usePosition} />
+        Position share sheet at click location
+      </label>
+    </div>
+    {#if usePosition}
+      <div class="form-group">
+        <label for="edge">Preferred Edge (macOS only)</label>
+        <select id="edge" bind:value={preferredEdge}>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+    {/if}
+  </section>
+
+  <section class="card">
     <h2>Share Text</h2>
     <div class="form-group">
       <label for="text">Text to share</label>
@@ -54,7 +88,7 @@
       <label for="text-mime">MIME Type (optional, Android only)</label>
       <input id="text-mime" type="text" bind:value={textMimeType} placeholder="text/plain" />
     </div>
-    <button onclick={handleShareText}>Share Text</button>
+    <button onclick={(e) => handleShareText(e)}>Share Text</button>
     {#if textStatus}
       <p class="status" class:error={textStatus.startsWith("Error")}>{textStatus}</p>
     {/if}
@@ -74,7 +108,7 @@
       <label for="file-title">Title (optional)</label>
       <input id="file-title" type="text" bind:value={fileTitle} placeholder="Document.pdf" />
     </div>
-    <button onclick={handleShareFile}>Share File</button>
+    <button onclick={(e) => handleShareFile(e)}>Share File</button>
     {#if fileStatus}
       <p class="status" class:error={fileStatus.startsWith("Error")}>{fileStatus}</p>
     {/if}
@@ -144,6 +178,27 @@
     resize: vertical;
   }
 
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background: white;
+  }
+
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: auto;
+  }
+
   button {
     width: 100%;
     padding: 0.75rem;
@@ -191,7 +246,7 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
-    input, textarea {
+    input, textarea, select {
       background: #2f2f2f;
       border-color: #555;
       color: #f6f6f6;

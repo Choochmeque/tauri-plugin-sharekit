@@ -7,13 +7,21 @@ import SwiftUI
 import UIKit
 import Foundation
 
+struct SharePosition: Decodable {
+  let x: Double
+  let y: Double
+  let preferredEdge: String?  // ignored on iOS
+}
+
 struct ShareOptions: Decodable {
   let text: String
+  let position: SharePosition?
 }
 
 struct ShareFileOptions: Decodable {
   let url: String
   let title: String?
+  let position: SharePosition?
 }
 
 class SharePlugin: Plugin {
@@ -28,13 +36,15 @@ class SharePlugin: Plugin {
     DispatchQueue.main.async {
       let activityViewController = UIActivityViewController(activityItems: [args.text], applicationActivities: nil)
 
-      // Display as popover on iPad as required by apple
-      activityViewController.popoverPresentationController?.sourceView = self.webview // display as a popover on ipad
+      // Display as popover on iPad as required by Apple
+      let posX = args.position?.x ?? Double(self.webview.bounds.midX)
+      let posY = args.position?.y ?? Double(self.webview.bounds.midY)
+      activityViewController.popoverPresentationController?.sourceView = self.webview
       activityViewController.popoverPresentationController?.sourceRect = CGRect(
-        x: self.webview.bounds.midX,
-        y: self.webview.bounds.midY,
-        width: CGFloat(Float(0.0)),
-        height: CGFloat(Float(0.0))
+        x: posX,
+        y: posY,
+        width: 0.0,
+        height: 0.0
       )
 
       activityViewController.completionWithItemsHandler = { _, completed, _, error in
@@ -75,12 +85,14 @@ class SharePlugin: Plugin {
       )
       
       // Display as popover on iPad as required by Apple
+      let posX = args.position?.x ?? Double(self.webview.bounds.midX)
+      let posY = args.position?.y ?? Double(self.webview.bounds.midY)
       activityViewController.popoverPresentationController?.sourceView = self.webview
       activityViewController.popoverPresentationController?.sourceRect = CGRect(
-        x: self.webview.bounds.midX,
-        y: self.webview.bounds.midY,
-        width: CGFloat(Float(0.0)),
-        height: CGFloat(Float(0.0))
+        x: posX,
+        y: posY,
+        width: 0.0,
+        height: 0.0
       )
 
       activityViewController.completionWithItemsHandler = { _, completed, _, error in

@@ -1,14 +1,36 @@
-use objc2::AnyThread;
 use serde::de::DeserializeOwned;
 use tauri::Manager;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
 use crate::models::*;
 
-use objc2::{rc::Retained, runtime::AnyObject};
-use objc2_app_kit::{NSSharingServicePicker, NSWindow};
+use objc2::{rc::Retained, runtime::AnyObject, AnyThread};
+use objc2_app_kit::{NSSharingServicePicker, NSView};
 use objc2_core_foundation::{CGPoint, CGSize};
 use objc2_foundation::{NSArray, NSRect, NSRectEdge, NSString, NSURL};
+
+impl From<RectEdge> for NSRectEdge {
+    fn from(edge: RectEdge) -> Self {
+        match edge {
+            RectEdge::Top => NSRectEdge::NSMaxYEdge,
+            RectEdge::Bottom => NSRectEdge::NSMinYEdge,
+            RectEdge::Left => NSRectEdge::NSMinXEdge,
+            RectEdge::Right => NSRectEdge::NSMaxXEdge,
+        }
+    }
+}
+
+fn position_to_rect(position: Option<&SharePosition>) -> (f64, f64, NSRectEdge) {
+    position
+        .map(|pos| {
+            let edge = pos
+                .preferred_edge
+                .map(Into::into)
+                .unwrap_or(NSRectEdge::NSMinYEdge);
+            (pos.x, pos.y, edge)
+        })
+        .unwrap_or((0.0, 0.0, NSRectEdge::NSMinYEdge))
+}
 
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
@@ -21,126 +43,70 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct ShareKit<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> ShareKit<R> {
-    pub fn share_text(&self, text: String, _options: ShareTextOptions) -> crate::Result<()> {
-        use std::sync::{Arc, Mutex};
+    pub fn share_text(&self, text: String, options: ShareTextOptions) -> crate::Result<()> {
+        let window = self
+            .0
+            .get_webview_window("main")
+            .ok_or(crate::Error::WindowNotFound)?;
 
-        let app_handle = self.0.clone();
-        let error_holder = Arc::new(Mutex::new(None));
-        let error_holder_clone = error_holder.clone();
+        window
+            .with_webview(move |webview| {
+                // Get the WKWebView as NSView
+                let ns_view: &NSView = unsafe { &*(webview.inner() as *const NSView) };
 
-        self.0
-            .run_on_main_thread(move || {
-                let result = (|| -> crate::Result<()> {
-                    let window = app_handle
-                        .get_webview_window("main")
-                        .ok_or(crate::Error::WindowNotFound)?;
-                    let ns_window = window
-                        .ns_window()
-                        .map_err(|_| crate::Error::WindowNotFound)?
-                        as *mut NSWindow;
-                    let content_view = unsafe {
-                        ns_window
-                            .as_ref()
-                            .ok_or(crate::Error::WindowNotFound)?
-                            .contentView()
-                            .ok_or(crate::Error::WindowNotFound)?
-                    };
+                let mut items: Vec<Retained<AnyObject>> = Vec::new();
+                let ns_string = NSString::from_str(&text);
+                items.push(unsafe { Retained::cast_unchecked(ns_string) });
 
-                    let mut items: Vec<Retained<AnyObject>> = Vec::new();
-                    let ns_string = NSString::from_str(&text);
-                    items.push(unsafe { Retained::cast_unchecked(ns_string) });
+                let items_array = NSArray::from_retained_slice(&items);
 
-                    // NSArray from Vec
-                    let items_array = NSArray::from_retained_slice(&items);
+                let (x, y, edge) = position_to_rect(options.position.as_ref());
 
-                    let rect = NSRect::new(CGPoint::new(0.0, 0.0), CGSize::new(1.0, 1.0));
-                    let picker = unsafe {
-                        NSSharingServicePicker::initWithItems(
-                            NSSharingServicePicker::alloc(),
-                            &items_array,
-                        )
-                    };
+                let rect = NSRect::new(CGPoint::new(x, y), CGSize::new(1.0, 1.0));
+                let picker = unsafe {
+                    NSSharingServicePicker::initWithItems(
+                        NSSharingServicePicker::alloc(),
+                        &items_array,
+                    )
+                };
 
-                    picker.showRelativeToRect_ofView_preferredEdge(
-                        rect,
-                        &content_view,
-                        NSRectEdge::NSMinYEdge,
-                    );
-
-                    Ok(())
-                })();
-
-                if let Err(e) = result {
-                    *error_holder_clone.lock().unwrap() = Some(e);
-                }
+                picker.showRelativeToRect_ofView_preferredEdge(rect, ns_view, edge);
             })
-            .map_err(|_| crate::Error::UnsupportedPlatform)?;
-
-        if let Some(error) = error_holder.lock().unwrap().take() {
-            return Err(error);
-        }
+            .map_err(|_| crate::Error::WindowNotFound)?;
 
         Ok(())
     }
 
-    pub fn share_file(&self, url: String, _options: ShareFileOptions) -> crate::Result<()> {
-        use std::sync::{Arc, Mutex};
+    pub fn share_file(&self, url: String, options: ShareFileOptions) -> crate::Result<()> {
+        let window = self
+            .0
+            .get_webview_window("main")
+            .ok_or(crate::Error::WindowNotFound)?;
 
-        let app_handle = self.0.clone();
-        let error_holder = Arc::new(Mutex::new(None));
-        let error_holder_clone = error_holder.clone();
+        window
+            .with_webview(move |webview| {
+                // Get the WKWebView as NSView
+                let ns_view: &NSView = unsafe { &*(webview.inner() as *const NSView) };
 
-        self.0
-            .run_on_main_thread(move || {
-                let result = (|| -> crate::Result<()> {
-                    let window = app_handle
-                        .get_webview_window("main")
-                        .ok_or(crate::Error::WindowNotFound)?;
-                    let ns_window = window
-                        .ns_window()
-                        .map_err(|_| crate::Error::WindowNotFound)?
-                        as *mut NSWindow;
-                    let content_view = unsafe {
-                        ns_window
-                            .as_ref()
-                            .ok_or(crate::Error::WindowNotFound)?
-                            .contentView()
-                            .ok_or(crate::Error::WindowNotFound)?
-                    };
+                let mut items: Vec<Retained<AnyObject>> = Vec::new();
+                let ns_url = NSURL::fileURLWithPath(&NSString::from_str(&url));
+                items.push(unsafe { Retained::cast_unchecked(ns_url) });
 
-                    let mut items: Vec<Retained<AnyObject>> = Vec::new();
-                    let ns_url = NSURL::fileURLWithPath(&NSString::from_str(&url));
-                    items.push(unsafe { Retained::cast_unchecked(ns_url) });
+                let items_array = NSArray::from_retained_slice(&items);
 
-                    // NSArray from Vec
-                    let items_array = NSArray::from_retained_slice(&items);
+                let (x, y, edge) = position_to_rect(options.position.as_ref());
 
-                    let rect = NSRect::new(CGPoint::new(0.0, 0.0), CGSize::new(1.0, 1.0));
-                    let picker = unsafe {
-                        NSSharingServicePicker::initWithItems(
-                            NSSharingServicePicker::alloc(),
-                            &items_array,
-                        )
-                    };
+                let rect = NSRect::new(CGPoint::new(x, y), CGSize::new(1.0, 1.0));
+                let picker = unsafe {
+                    NSSharingServicePicker::initWithItems(
+                        NSSharingServicePicker::alloc(),
+                        &items_array,
+                    )
+                };
 
-                    picker.showRelativeToRect_ofView_preferredEdge(
-                        rect,
-                        &content_view,
-                        NSRectEdge::NSMinYEdge,
-                    );
-
-                    Ok(())
-                })();
-
-                if let Err(e) = result {
-                    *error_holder_clone.lock().unwrap() = Some(e);
-                }
+                picker.showRelativeToRect_ofView_preferredEdge(rect, ns_view, edge);
             })
-            .map_err(|_| crate::Error::UnsupportedPlatform)?;
-
-        if let Some(error) = error_holder.lock().unwrap().take() {
-            return Err(error);
-        }
+            .map_err(|_| crate::Error::WindowNotFound)?;
 
         Ok(())
     }

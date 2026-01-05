@@ -1,13 +1,24 @@
 import { invoke } from "@tauri-apps/api/core";
 
+export interface SharePosition {
+  x: number;
+  y: number;
+  /** macOS only: which edge the picker appears from */
+  preferredEdge?: "top" | "bottom" | "left" | "right";
+}
+
 export interface ShareTextOptions {
-  // Android only
+  /** Android only */
   mimeType?: string;
+  /** Position for the share sheet (iPad/macOS only) */
+  position?: SharePosition;
 }
 
 export interface ShareFileOptions {
   mimeType?: string;
   title?: string;
+  /** Position for the share sheet (iPad/macOS only) */
+  position?: SharePosition;
 }
 
 /**
