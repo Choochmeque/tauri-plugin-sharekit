@@ -1,4 +1,4 @@
-use tauri::Manager;
+use tauri::AppHandle;
 use tauri::{command, Runtime, WebviewWindow};
 
 use crate::models::*;
@@ -6,12 +6,12 @@ use crate::ShareExt;
 
 #[command]
 pub async fn share_text<R: Runtime>(
+    app_handle: AppHandle<R>,
     window: WebviewWindow<R>,
     text: String,
     mime_type: Option<String>,
     position: Option<SharePosition>,
 ) -> Result<(), String> {
-    let app_handle = window.app_handle().clone();
     app_handle
         .share()
         .share_text(
@@ -27,13 +27,13 @@ pub async fn share_text<R: Runtime>(
 
 #[command]
 pub async fn share_file<R: Runtime>(
+    app_handle: AppHandle<R>,
     window: WebviewWindow<R>,
     url: String,
     mime_type: Option<String>,
     title: Option<String>,
     position: Option<SharePosition>,
 ) -> Result<(), String> {
-    let app_handle = window.app_handle().clone();
     app_handle
         .share()
         .share_file(
