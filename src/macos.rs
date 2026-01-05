@@ -201,5 +201,5 @@ impl<R: Runtime> ShareKit<R> {
 fn get_app_group_id() -> Option<String> {
     let main_bundle = NSBundle::mainBundle();
     let bundle_id = main_bundle.bundleIdentifier()?;
-    Some(format!("group.{}", bundle_id.to_string()))
+    Some(format!("group.{bundle_id}"))
 }
