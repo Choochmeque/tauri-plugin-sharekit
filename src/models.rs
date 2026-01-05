@@ -19,7 +19,7 @@ pub struct SharePosition {
     pub preferred_edge: Option<RectEdge>,
 }
 
-#[derive(Debug, Default, Serialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShareTextOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -36,7 +36,7 @@ pub struct ShareTextPayload {
     pub options: ShareTextOptions,
 }
 
-#[derive(Debug, Default, Serialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ShareFileOptions {
     #[serde(skip_serializing_if = "Option::is_none")]

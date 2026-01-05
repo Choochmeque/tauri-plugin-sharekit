@@ -20,6 +20,18 @@ impl From<RectEdge> for NSRectEdge {
     }
 }
 
+fn position_to_rect(position: Option<&SharePosition>) -> (f64, f64, NSRectEdge) {
+    position
+        .map(|pos| {
+            let edge = pos
+                .preferred_edge
+                .map(Into::into)
+                .unwrap_or(NSRectEdge::NSMinYEdge);
+            (pos.x, pos.y, edge)
+        })
+        .unwrap_or((0.0, 0.0, NSRectEdge::NSMinYEdge))
+}
+
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
     _api: PluginApi<R, C>,
@@ -48,16 +60,7 @@ impl<R: Runtime> ShareKit<R> {
 
                 let items_array = NSArray::from_retained_slice(&items);
 
-                // WKWebView uses flipped coordinates (Y=0 at top) like web
-                let (x, y, edge) = if let Some(pos) = &options.position {
-                    let edge = pos
-                        .preferred_edge
-                        .map(Into::into)
-                        .unwrap_or(NSRectEdge::NSMinYEdge);
-                    (pos.x, pos.y, edge)
-                } else {
-                    (0.0, 0.0, NSRectEdge::NSMinYEdge)
-                };
+                let (x, y, edge) = position_to_rect(options.position.as_ref());
 
                 let rect = NSRect::new(CGPoint::new(x, y), CGSize::new(1.0, 1.0));
                 let picker = unsafe {
@@ -91,16 +94,7 @@ impl<R: Runtime> ShareKit<R> {
 
                 let items_array = NSArray::from_retained_slice(&items);
 
-                // WKWebView uses flipped coordinates (Y=0 at top) like web
-                let (x, y, edge) = if let Some(pos) = &options.position {
-                    let edge = pos
-                        .preferred_edge
-                        .map(Into::into)
-                        .unwrap_or(NSRectEdge::NSMinYEdge);
-                    (pos.x, pos.y, edge)
-                } else {
-                    (0.0, 0.0, NSRectEdge::NSMinYEdge)
-                };
+                let (x, y, edge) = position_to_rect(options.position.as_ref());
 
                 let rect = NSRect::new(CGPoint::new(x, y), CGSize::new(1.0, 1.0));
                 let picker = unsafe {
