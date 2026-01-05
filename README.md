@@ -74,6 +74,11 @@ await shareFile('file:///path/to/document.pdf', {
   mimeType: 'application/pdf',
   title: 'My Document'
 });
+
+// Share with position (iPad/macOS only)
+await shareText('Hello!', {
+  position: { x: 100, y: 200, preferredEdge: 'bottom' }
+});
 ```
 
 ## Contributing

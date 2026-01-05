@@ -8,9 +8,16 @@ pub async fn share_text<R: Runtime>(
     app: AppHandle<R>,
     text: String,
     mime_type: Option<String>,
+    position: Option<SharePosition>,
 ) -> Result<(), String> {
     app.share()
-        .share_text(text, ShareTextOptions { mime_type })
+        .share_text(
+            text,
+            ShareTextOptions {
+                mime_type,
+                position,
+            },
+        )
         .map_err(|e| e.to_string())
 }
 
@@ -20,8 +27,16 @@ pub async fn share_file<R: Runtime>(
     url: String,
     mime_type: Option<String>,
     title: Option<String>,
+    position: Option<SharePosition>,
 ) -> Result<(), String> {
     app.share()
-        .share_file(url, ShareFileOptions { mime_type, title })
+        .share_file(
+            url,
+            ShareFileOptions {
+                mime_type,
+                title,
+                position,
+            },
+        )
         .map_err(|e| e.to_string())
 }
