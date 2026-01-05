@@ -1,6 +1,6 @@
 use serde::de::DeserializeOwned;
 use tauri::Manager;
-use tauri::{plugin::PluginApi, AppHandle, Runtime};
+use tauri::{plugin::PluginApi, AppHandle, Runtime, WebviewWindow};
 
 use crate::models::*;
 use crate::Error;
@@ -48,12 +48,13 @@ impl<R: Runtime> ShareKit<R> {
     }
 
     /// Opens the native share UI to share text content.
-    pub fn share_text(&self, text: String, _options: ShareTextOptions) -> crate::Result<()> {
+    pub fn share_text(
+        &self,
+        window: WebviewWindow<R>,
+        text: String,
+        _options: ShareTextOptions,
+    ) -> crate::Result<()> {
         // Get the window handle from Tauri
-        let window = self
-            .app
-            .get_webview_window("main")
-            .ok_or(crate::Error::WindowNotFound)?;
         let hwnd = window
             .hwnd()
             .map_err(|e| crate::Error::WindowsApi(e.to_string()))?;
@@ -134,12 +135,13 @@ impl<R: Runtime> ShareKit<R> {
     }
 
     /// Opens the native share UI to share a file.
-    pub fn share_file(&self, url: String, options: ShareFileOptions) -> crate::Result<()> {
+    pub fn share_file(
+        &self,
+        window: WebviewWindow<R>,
+        url: String,
+        options: ShareFileOptions,
+    ) -> crate::Result<()> {
         // Get the window handle from Tauri
-        let window = self
-            .app
-            .get_webview_window("main")
-            .ok_or(crate::Error::WindowNotFound)?;
         let hwnd = window
             .hwnd()
             .map_err(|e| crate::Error::WindowsApi(e.to_string()))?;
