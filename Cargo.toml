@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-sharekit"
-version = "0.2.5"
+version = "0.3.0"
 description = "A Tauri v2 plugin that enables sharing content with native sharing interfaces on Android, iOS, macOS and Windows."
 edition = "2021"
 authors = [ "You" ]
@@ -29,7 +29,7 @@ objc2-foundation = { version = "0.3", features = [
   "NSURL",
   "NSPathUtilities",
 ] }
-objc2-app-kit = { version = "0.3", features = ["NSSharingService", "NSView", "NSResponder", "NSWindow"] }
+objc2-app-kit = { version = "0.3", features = ["NSSharingService", "NSView", "NSResponder"] }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = { version = "0.61", features = [

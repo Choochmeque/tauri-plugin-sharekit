@@ -22,7 +22,7 @@ Install the Core plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-sharekit = "0.2"
+tauri-plugin-sharekit = "0.3"
 # alternatively with Git:
 tauri-plugin-sharekit = { git = "https://github.com/Choochmeque/tauri-plugin-sharekit" }
 ```
@@ -73,6 +73,12 @@ await shareText('Tauri is great!');
 await shareFile('file:///path/to/document.pdf', {
   mimeType: 'application/pdf',
   title: 'My Document'
+});
+
+// Share with position (iPad/macOS only)
+// x and y are in webview coordinates (pixels from top-left)
+await shareText('Hello!', {
+  position: { x: 100, y: 200, preferredEdge: 'bottom' }
 });
 ```
 
