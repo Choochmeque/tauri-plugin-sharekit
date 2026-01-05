@@ -10,7 +10,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "tauri": "tauri",
-    "tauri:macos:dev": "tauri-macos-xcode dev --open"
+    "tauri:macos:dev": "tauri-macos-xcode dev --open",
+    "tauri:windows:build": "tauri-windows-bundle build"
   },
   "license": "MIT",
   "dependencies": {
@@ -28,6 +29,7 @@
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "typescript": "~5.6.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "@choochmeque/tauri-windows-bundle": "^0.1.11"
   }
 }
