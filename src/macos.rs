@@ -1,5 +1,5 @@
 use serde::de::DeserializeOwned;
-use tauri::Manager;
+use tauri::WebviewWindow;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
 use crate::models::*;
@@ -45,12 +45,12 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct ShareKit<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> ShareKit<R> {
-    pub fn share_text(&self, text: String, options: ShareTextOptions) -> crate::Result<()> {
-        let window = self
-            .0
-            .get_webview_window("main")
-            .ok_or(crate::Error::WindowNotFound)?;
-
+    pub fn share_text(
+        &self,
+        window: WebviewWindow<R>,
+        text: String,
+        options: ShareTextOptions,
+    ) -> crate::Result<()> {
         window
             .with_webview(move |webview| {
                 // Get the WKWebView as NSView
@@ -79,12 +79,12 @@ impl<R: Runtime> ShareKit<R> {
         Ok(())
     }
 
-    pub fn share_file(&self, url: String, options: ShareFileOptions) -> crate::Result<()> {
-        let window = self
-            .0
-            .get_webview_window("main")
-            .ok_or(crate::Error::WindowNotFound)?;
-
+    pub fn share_file(
+        &self,
+        window: WebviewWindow<R>,
+        url: String,
+        options: ShareFileOptions,
+    ) -> crate::Result<()> {
         window
             .with_webview(move |webview| {
                 // Get the WKWebView as NSView

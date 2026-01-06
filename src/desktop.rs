@@ -1,5 +1,5 @@
 use serde::de::DeserializeOwned;
-use tauri::{plugin::PluginApi, AppHandle, Runtime};
+use tauri::{plugin::PluginApi, AppHandle, Runtime, WebviewWindow};
 
 use crate::models::*;
 
@@ -14,11 +14,21 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct ShareKit<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> ShareKit<R> {
-    pub fn share_text(&self, _text: String, _options: ShareTextOptions) -> crate::Result<()> {
+    pub fn share_text(
+        &self,
+        _window: WebviewWindow<R>,
+        _text: String,
+        _options: ShareTextOptions,
+    ) -> crate::Result<()> {
         Err(crate::Error::UnsupportedPlatform)
     }
 
-    pub fn share_file(&self, _url: String, _options: ShareFileOptions) -> crate::Result<()> {
+    pub fn share_file(
+        &self,
+        _window: WebviewWindow<R>,
+        _url: String,
+        _options: ShareFileOptions,
+    ) -> crate::Result<()> {
         Err(crate::Error::UnsupportedPlatform)
     }
 

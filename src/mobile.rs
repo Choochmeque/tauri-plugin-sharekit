@@ -1,7 +1,7 @@
 use serde::de::DeserializeOwned;
 use tauri::{
     plugin::{PluginApi, PluginHandle},
-    AppHandle, Runtime,
+    AppHandle, Runtime, WebviewWindow,
 };
 
 use crate::models::*;
@@ -28,13 +28,23 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct ShareKit<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> ShareKit<R> {
-    pub fn share_text(&self, text: String, options: ShareTextOptions) -> crate::Result<()> {
+    pub fn share_text(
+        &self,
+        _window: WebviewWindow<R>,
+        text: String,
+        options: ShareTextOptions,
+    ) -> crate::Result<()> {
         self.0
             .run_mobile_plugin("shareText", ShareTextPayload { text, options })
             .map_err(Into::into)
     }
 
-    pub fn share_file(&self, url: String, options: ShareFileOptions) -> crate::Result<()> {
+    pub fn share_file(
+        &self,
+        _window: WebviewWindow<R>,
+        url: String,
+        options: ShareFileOptions,
+    ) -> crate::Result<()> {
         self.0
             .run_mobile_plugin("shareFile", ShareFilePayload { url, options })
             .map_err(Into::into)
