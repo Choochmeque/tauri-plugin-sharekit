@@ -53,7 +53,7 @@ fn is_msix_packaged() -> bool {
 fn get_current_instance() -> crate::Result<AppInstance> {
     AppInstance::GetInstances()?
         .into_iter()
-        .find(|inst| inst.IsCurrent().unwrap_or(false))
+        .find(|inst| inst.IsCurrentInstance().unwrap_or(false))
         .ok_or_else(|| Error::WindowsApi("Current instance not found".into()))
 }
 
@@ -108,7 +108,7 @@ impl<R: Runtime> ShareKit<R> {
         let key = HSTRING::from("ShareKit_Instance");
         let instance = AppInstance::FindOrRegisterInstanceForKey(&key)?;
 
-        if instance.IsCurrent()? {
+        if instance.IsCurrentInstance()? {
             // We are the main instance
             log::debug!("ShareKit: Main instance, setting up share target handlers");
             self.setup_activated_handler()?;
