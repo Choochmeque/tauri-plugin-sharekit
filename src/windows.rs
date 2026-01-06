@@ -1,5 +1,4 @@
 use serde::de::DeserializeOwned;
-use tauri::Manager;
 use tauri::{plugin::PluginApi, AppHandle, Runtime, WebviewWindow};
 
 use crate::models::*;
