@@ -118,10 +118,7 @@ impl<R: Runtime> ShareKit<R> {
 
         // We are a secondary instance - redirect activation to main and exit
         log::debug!("ShareKit: Secondary instance, redirecting to main");
-        let current = get_current_instance()?;
-        if let Ok(Some(args)) = current.GetActivatedEventArgs() {
-            let _ = instance.RedirectActivationToAsync(&args)?.get();
-        }
+        let _ = instance.RedirectActivationTo();
         Ok(true)
     }
 
@@ -165,14 +162,13 @@ impl<R: Runtime> ShareKit<R> {
             },
         );
 
-        current.Activated(&handler)?;
+        current.add_Activated(&handler)?;
         Ok(())
     }
 
     /// Check if app was launched via share target (cold start).
     fn check_initial_activation(&self) -> crate::Result<()> {
-        let current = AppInstance::GetCurrent()?;
-        let args = current.GetActivatedEventArgs();
+        let args = AppInstance::GetActivatedEventArgs();
 
         if let Ok(Some(args)) = args {
             if let Ok(kind) = args.Kind() {
