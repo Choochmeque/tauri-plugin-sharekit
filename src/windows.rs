@@ -49,6 +49,14 @@ fn is_msix_packaged() -> bool {
     result.is_err() && length > 0
 }
 
+/// Gets the current AppInstance (workaround for missing GetCurrent in windows crate 0.61).
+fn get_current_instance() -> crate::Result<AppInstance> {
+    AppInstance::GetInstances()?
+        .into_iter()
+        .find(|inst| inst.IsCurrent().unwrap_or(false))
+        .ok_or_else(|| Error::WindowsApi("Current instance not found".into()))
+}
+
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
     _api: PluginApi<R, C>,
@@ -98,7 +106,7 @@ impl<R: Runtime> ShareKit<R> {
         }
 
         let key = HSTRING::from("ShareKit_Instance");
-        let instance = AppInstance::FindOrRegisterForKey(&key)?;
+        let instance = AppInstance::FindOrRegisterInstanceForKey(&key)?;
 
         if instance.IsCurrent()? {
             // We are the main instance
@@ -110,7 +118,7 @@ impl<R: Runtime> ShareKit<R> {
 
         // We are a secondary instance - redirect activation to main and exit
         log::debug!("ShareKit: Secondary instance, redirecting to main");
-        let current = AppInstance::GetCurrent()?;
+        let current = get_current_instance()?;
         if let Ok(Some(args)) = current.GetActivatedEventArgs() {
             let _ = instance.RedirectActivationToAsync(&args)?.get();
         }
@@ -119,7 +127,7 @@ impl<R: Runtime> ShareKit<R> {
 
     /// Set up handler for warm start (app already running, receives new share).
     fn setup_activated_handler(&self) -> crate::Result<()> {
-        let current = AppInstance::GetCurrent()?;
+        let current = get_current_instance()?;
         let cache_dir = self.get_cache_dir()?;
 
         let handler = TypedEventHandler::new(
@@ -193,7 +201,7 @@ impl<R: Runtime> ShareKit<R> {
         self.app
             .path()
             .app_cache_dir()
-            .map_err(|e| Error::WindowsApi(format!("Failed to get cache dir: {}", e)))
+            .map_err(|e| Error::WindowsApi(format!("Failed to get cache dir: {e}")))
     }
 
     /// Opens the native share UI to share text content.
@@ -479,7 +487,7 @@ fn copy_file_to_cache(
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_millis())
         .unwrap_or(0);
-    let dest_name = format!("{}_{}", timestamp, name);
+    let dest_name = format!("{timestamp}_{name}");
     let dest_path = cache_dir.join(&dest_name);
 
     // Get destination folder as StorageFolder
