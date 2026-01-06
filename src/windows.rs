@@ -16,7 +16,7 @@ use windows::{
         AppInstance,
     },
     Foundation::TypedEventHandler,
-    Storage::{IStorageItem, StorageFile, StorageFolder},
+    Storage::{IStorageFile, IStorageItem, StorageFile, StorageFolder},
     Win32::{
         Storage::Packaging::Appx::GetCurrentPackageFullName,
         System::WinRT::{RoGetActivationFactory, RoInitialize, RO_INIT_SINGLETHREADED},
@@ -170,7 +170,7 @@ impl<R: Runtime> ShareKit<R> {
     fn check_initial_activation(&self) -> crate::Result<()> {
         let args = AppInstance::GetActivatedEventArgs();
 
-        if let Ok(Some(args)) = args {
+        if let Ok(args) = args {
             if let Ok(kind) = args.Kind() {
                 if kind == ActivationKind::ShareTarget {
                     log::info!("ShareKit: App launched via share target (cold start)");
@@ -492,7 +492,8 @@ fn copy_file_to_cache(
         StorageFolder::GetFolderFromPathAsync(&HSTRING::from(cache_dir_str.as_ref()))?.get()?;
 
     // Copy file to cache
-    file.CopyAsync(&dest_folder)?.get()?;
+    let storage_file: IStorageFile = file.cast()?;
+    storage_file.CopyAsync(&dest_folder)?.get()?;
 
     Ok(SharedFile {
         path: dest_path.to_string_lossy().to_string(),

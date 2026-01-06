@@ -37,6 +37,7 @@ windows = { version = "0.61", features = [
   "Foundation",
   "Foundation_Collections",
   "Storage",
+  "Storage_FileProperties",
   "Storage_Search",
   "Storage_Streams",
   "Win32_System_WinRT",
