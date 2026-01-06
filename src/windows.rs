@@ -162,7 +162,7 @@ impl<R: Runtime> ShareKit<R> {
             },
         );
 
-        current.add_Activated(&handler)?;
+        current.Activated(&handler)?;
         Ok(())
     }
 

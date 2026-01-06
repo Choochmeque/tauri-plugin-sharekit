@@ -45,6 +45,7 @@ windows = { version = "0.61", features = [
   # Share Target support
   "ApplicationModel",
   "ApplicationModel_Activation",
+  "ApplicationModel_Core",
   "ApplicationModel_DataTransfer_ShareTarget",
   "Win32_Storage_Packaging_Appx",
 ] }
