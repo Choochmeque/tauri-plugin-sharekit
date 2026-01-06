@@ -488,12 +488,8 @@ fn copy_file_to_cache(
 
     // Get source path and copy using std::fs
     let source_path = file.Path()?.to_string();
-    std::fs::copy(&source_path, &dest_path).map_err(|e| {
-        Error::Io(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            format!("Failed to copy file: {e}"),
-        ))
-    })?;
+    std::fs::copy(&source_path, &dest_path)
+        .map_err(|e| Error::Io(std::io::Error::other(format!("Failed to copy file: {e}"))))?;
 
     Ok(SharedFile {
         path: dest_path.to_string_lossy().to_string(),
