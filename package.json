@@ -31,10 +31,19 @@
     "pretest": "pnpm build",
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\"",
-    "format-check": "prettier --check \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\""
+    "format:check": "prettier --check \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\""
+  },
+  "tauri-apple-extension": {
+    "type": "share",
+    "templates": {
+      "ios": "./ios/templates",
+      "macos": "./macos/templates"
+    }
   },
   "files": [
     "dist-js",
+    "ios/templates",
+    "macos/templates",
     "README.md"
   ],
   "directories": {
