@@ -10,13 +10,14 @@ use std::sync::{Mutex, OnceLock};
 
 use windows::{
     core::{Interface, HSTRING},
+    ApplicationModel::Core::{CoreApplication, CoreApplicationView},
     ApplicationModel::DataTransfer::{DataRequestedEventArgs, DataTransferManager},
     ApplicationModel::{
         Activation::{ActivationKind, IActivatedEventArgs, ShareTargetActivatedEventArgs},
         AppInstance,
     },
     Foundation::TypedEventHandler,
-    Storage::{IStorageFile, IStorageItem, StorageFile, StorageFolder},
+    Storage::{IStorageItem, StorageFile},
     Win32::{
         Storage::Packaging::Appx::GetCurrentPackageFullName,
         System::WinRT::{RoGetActivationFactory, RoInitialize, RO_INIT_SINGLETHREADED},
@@ -47,14 +48,6 @@ fn is_msix_packaged() -> bool {
     let result = unsafe { GetCurrentPackageFullName(&mut length, None) };
     // If we got ERROR_INSUFFICIENT_BUFFER (buffer too small), we're packaged
     result.is_err() && length > 0
-}
-
-/// Gets the current AppInstance (workaround for missing GetCurrent in windows crate 0.61).
-fn get_current_instance() -> crate::Result<AppInstance> {
-    AppInstance::GetInstances()?
-        .into_iter()
-        .find(|inst| inst.IsCurrentInstance().unwrap_or(false))
-        .ok_or_else(|| Error::WindowsApi("Current instance not found".into()))
 }
 
 pub fn init<R: Runtime, C: DeserializeOwned>(
@@ -124,45 +117,52 @@ impl<R: Runtime> ShareKit<R> {
 
     /// Set up handler for warm start (app already running, receives new share).
     fn setup_activated_handler(&self) -> crate::Result<()> {
-        let current = get_current_instance()?;
         let cache_dir = self.get_cache_dir()?;
 
-        let handler = TypedEventHandler::new(
-            move |_sender, args: windows::core::Ref<'_, IActivatedEventArgs>| {
-                if let Some(args) = args.as_ref() {
-                    if let Ok(kind) = args.Kind() {
-                        if kind == ActivationKind::ShareTarget {
-                            log::info!("ShareKit: Received share target activation (warm start)");
-                            if let Ok(share_args) = args.cast::<ShareTargetActivatedEventArgs>() {
-                                match extract_shared_content(&share_args, &cache_dir) {
-                                    Ok(content) => {
-                                        // Report completed to Windows
-                                        if let Ok(op) = share_args.ShareOperation() {
-                                            let _ = op.ReportCompleted();
-                                        }
+        let handler: TypedEventHandler<CoreApplicationView, IActivatedEventArgs> =
+            TypedEventHandler::new(
+                move |_sender: windows::core::Ref<'_, CoreApplicationView>,
+                      args: windows::core::Ref<'_, IActivatedEventArgs>| {
+                    if let Some(args) = args.as_ref() {
+                        if let Ok(kind) = args.Kind() {
+                            if kind == ActivationKind::ShareTarget {
+                                log::info!(
+                                    "ShareKit: Received share target activation (warm start)"
+                                );
+                                if let Ok(share_args) = args.cast::<ShareTargetActivatedEventArgs>()
+                                {
+                                    match extract_shared_content(&share_args, &cache_dir) {
+                                        Ok(content) => {
+                                            // Report completed to Windows
+                                            if let Ok(op) = share_args.ShareOperation() {
+                                                let _ = op.ReportCompleted();
+                                            }
 
-                                        // Trigger event for JavaScript listeners
-                                        if let Ok(payload) = serde_json::to_string(&content) {
-                                            let _ =
-                                                crate::listeners::trigger("sharedContent", payload);
+                                            // Trigger event for JavaScript listeners
+                                            if let Ok(payload) = serde_json::to_string(&content) {
+                                                let _ = crate::listeners::trigger(
+                                                    "sharedContent",
+                                                    payload,
+                                                );
+                                            }
                                         }
-                                    }
-                                    Err(e) => {
-                                        log::error!(
-                                            "ShareKit: Failed to extract shared content: {}",
-                                            e
-                                        );
+                                        Err(e) => {
+                                            log::error!(
+                                                "ShareKit: Failed to extract shared content: {}",
+                                                e
+                                            );
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                Ok(())
-            },
-        );
+                    Ok(())
+                },
+            );
 
-        current.Activated(&handler)?;
+        let view = CoreApplication::GetCurrentView()?;
+        view.Activated(&handler)?;
         Ok(())
     }
 
@@ -486,14 +486,14 @@ fn copy_file_to_cache(
     let dest_name = format!("{timestamp}_{name}");
     let dest_path = cache_dir.join(&dest_name);
 
-    // Get destination folder as StorageFolder
-    let cache_dir_str = cache_dir.to_string_lossy();
-    let dest_folder =
-        StorageFolder::GetFolderFromPathAsync(&HSTRING::from(cache_dir_str.as_ref()))?.get()?;
-
-    // Copy file to cache
-    let storage_file: IStorageFile = file.cast()?;
-    storage_file.CopyAsync(&dest_folder)?.get()?;
+    // Get source path and copy using std::fs
+    let source_path = file.Path()?.to_string();
+    std::fs::copy(&source_path, &dest_path).map_err(|e| {
+        Error::Io(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            format!("Failed to copy file: {e}"),
+        ))
+    })?;
 
     Ok(SharedFile {
         path: dest_path.to_string_lossy().to_string(),
