@@ -18,7 +18,15 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$CACHE/**",
+          "$APPCACHE/**",
+          "**/Containers/Shared/AppGroup/**"
+        ]
+      }
     }
   },
   "bundle": {
