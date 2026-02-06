@@ -82,6 +82,228 @@ await shareText('Hello!', {
 });
 ```
 
+### Receiving Shared Content (Share Target)
+
+Your app can receive content shared from other apps:
+
+```javascript
+import {
+  getPendingSharedContent,
+  clearPendingSharedContent,
+  onSharedContent
+} from "@choochmeque/tauri-plugin-sharekit-api";
+
+// Check for shared content on app startup (cold start)
+const content = await getPendingSharedContent();
+if (content) {
+  if (content.type === 'text') {
+    console.log('Received text:', content.text);
+  } else if (content.type === 'files') {
+    for (const file of content.files) {
+      console.log('Received file:', file.name, file.path);
+    }
+  }
+  await clearPendingSharedContent();
+}
+
+// Listen for shares while app is running (warm start)
+const unlisten = await onSharedContent((content) => {
+  console.log('Received:', content);
+});
+```
+
+## Platform Setup
+
+### Android
+
+To receive shared content on Android, add intent filters to your `AndroidManifest.xml`:
+
+`src-tauri/gen/android/app/src/main/AndroidManifest.xml`
+
+Add these intent filters inside your `<activity>` tag:
+
+```xml
+<!-- Receive text shares -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="text/*" />
+</intent-filter>
+
+<!-- Receive image shares -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="image/*" />
+</intent-filter>
+
+<!-- Receive any file -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="*/*" />
+</intent-filter>
+
+<!-- Receive multiple files -->
+<intent-filter>
+    <action android:name="android.intent.action.SEND_MULTIPLE" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <data android:mimeType="*/*" />
+</intent-filter>
+```
+
+You can customize the `mimeType` values to only accept specific file types.
+
+### iOS
+
+To receive shared content on iOS, you need to add a Share Extension. Use the `@choochmeque/tauri-apple-extensions` tool after initializing your iOS project:
+
+```bash
+# First, initialize the iOS project if you haven't already
+tauri ios init
+
+# Then add the Share Extension
+npx @choochmeque/tauri-apple-extensions ios add share --plugin @choochmeque/tauri-plugin-sharekit-api
+```
+
+The setup tool will:
+1. Create a Share Extension target in your Xcode project
+2. Configure App Groups for communication between the extension and main app
+3. Add a URL scheme for the extension to open your app
+
+**After running the script, you must:**
+
+1. Open the Xcode project (`src-tauri/gen/apple/*.xcodeproj`)
+2. Select your Apple Developer Team for both targets:
+   - Main app target (e.g., `myapp_iOS`)
+   - Share Extension target (e.g., `myapp-ShareExtension`)
+3. Enable the "App Groups" capability for **both** targets in Xcode
+4. In Apple Developer Portal, create the App Group (e.g., `group.com.your.app`) and add it to both App IDs
+
+**App Group Configuration:**
+
+The extension and main app communicate via App Groups. The setup script uses `group.{your.bundle.id}` as the App Group identifier. Make sure this is configured in:
+- Apple Developer Portal (create the App Group)
+- Both App IDs (main app and extension)
+- Xcode capabilities for both targets
+
+### macOS
+
+To receive shared content on macOS, you need to add a Share Extension. First, create the macOS Xcode project, then add the extension:
+
+```bash
+# First, create the macOS Xcode project
+npx @choochmeque/tauri-macos-xcode init
+
+# Then add the Share Extension
+npx @choochmeque/tauri-apple-extensions macos add share --plugin @choochmeque/tauri-plugin-sharekit-api
+```
+
+The setup tool will:
+1. Create a Share Extension target in your Xcode project
+2. Configure App Groups for communication between the extension and main app
+3. Add a URL scheme for the extension to open your app
+
+**After running the script, you must:**
+
+1. Open the Xcode project (`src-tauri/gen/apple-macos/*.xcodeproj`)
+2. Select your Apple Developer Team for both targets:
+   - Main app target (e.g., `myapp_macOS`)
+   - Share Extension target (e.g., `myapp-ShareExtension`)
+3. Enable the "App Groups" capability for **both** targets in Xcode
+4. In Apple Developer Portal, create the App Group (e.g., `group.com.your.app`) and add it to both App IDs
+
+**Development workflow:**
+
+```bash
+# Start the dev server and open Xcode
+pnpm tauri:macos:dev
+
+# Then press Cmd+R in Xcode to build and run
+```
+
+### Windows
+
+To receive shared content on Windows, your app must be packaged as MSIX.
+
+**Requirements:**
+- Windows 10 version 2004+ (build 19041)
+- MSIX packaging (use [@choochmeque/tauri-windows-bundle](https://github.com/Choochmeque/tauri-windows-bundle))
+
+**Setup:**
+
+1. Initialize Windows bundle (if not already done) and add share target extension:
+
+```bash
+npx @choochmeque/tauri-windows-bundle init
+npx @choochmeque/tauri-windows-bundle extension add share-target
+```
+
+2. Add share target handling to your Tauri setup:
+
+`src-tauri/src/main.rs`
+
+```rust
+fn main() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_sharekit::init())
+        .setup(|app| {
+            #[cfg(target_os = "windows")]
+            {
+                use tauri_plugin_sharekit::ShareExt;
+                if app.share().handle_share_activation()? {
+                    app.handle().exit(0);
+                }
+            }
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
+```
+
+### Displaying Received Images
+
+To display received images in your app, enable the asset protocol feature and configure the scope.
+
+`src-tauri/Cargo.toml`
+
+```toml
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+```
+
+`src-tauri/tauri.conf.json`
+
+```json
+{
+  "app": {
+    "security": {
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$CACHE/**",
+          "$APPCACHE/**",
+          "**/Containers/Shared/AppGroup/**"
+        ]
+      }
+    }
+  }
+}
+```
+
+The `**/Containers/Shared/AppGroup/**` scope is required on iOS to access files shared via the Share Extension (works for both simulator and real devices).
+
+Then in your frontend:
+
+```javascript
+import { convertFileSrc } from "@tauri-apps/api/core";
+
+// file.path is from SharedContent.files
+const imageUrl = convertFileSrc(file.path);
+// Use imageUrl in an <img> tag
+```
+
 ## Contributing
 
 PRs accepted. Please make sure to read the Contributing Guide before making a pull request.

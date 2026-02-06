@@ -39,6 +39,10 @@ targets:
     info:
       path: share-demo_iOS/Info.plist
       properties:
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tauri.dev
+            CFBundleURLSchemes:
+              - sharedemo
         LSRequiresIPhoneOS: true
         UILaunchStoryboardName: LaunchScreen
         UIRequiredDeviceCapabilities: [arm64, metal]
@@ -70,6 +74,9 @@ targets:
         EXCLUDED_ARCHS[sdk=iphoneos*]: x86_64
       groups: [app]
     dependencies:
+      - target: share-demo-ShareExtension
+        embed: true
+        codeSign: true
       - framework: libapp.a
         embed: false
       - sdk: CoreGraphics.framework
@@ -86,3 +93,30 @@ targets:
         outputFiles:
           - $(SRCROOT)/Externals/x86_64/${CONFIGURATION}/libapp.a
           - $(SRCROOT)/Externals/arm64/${CONFIGURATION}/libapp.a
+  share-demo-ShareExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: ShareExtension
+    info:
+      path: ShareExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Share
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "0.1.0"
+        NSExtension:
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsFileWithMaxCount: 10
+              NSExtensionActivationSupportsImageWithMaxCount: 10
+              NSExtensionActivationSupportsMovieWithMaxCount: 10
+              NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tauri.dev.ShareExtension
+        SKIP_INSTALL: YES
+        CODE_SIGN_ENTITLEMENTS: ShareExtension/ShareExtension.entitlements

@@ -3,40 +3,72 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		06DCEFF51CAB770C5D829309 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 7B778F2EECF81887D1A0BC95 /* assets */; };
 		32C547235F3B94638AEF25F6 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCB952AB100B38C9D9520EF0 /* main.mm */; };
 		76F33D09C65CD01A184DDB96 /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECECAF43BD8026C337A33CF5 /* libapp.a */; };
+		796D69A2A02142ABBEDDF6CD /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91EE2794260B4C425F3A13E /* ShareViewController.swift */; };
 		79EB6780CF905A2FE96222A8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82329E9CAAE5001915588760 /* WebKit.framework */; };
 		7EB469D532759BC0057A239F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598DF56AC243E5FDDB6AFB64 /* Metal.framework */; };
 		93305C477A44758969508E99 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22E983BB538262B8C49B973B /* LaunchScreen.storyboard */; };
 		991615C307B241B96D48D565 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0864E1D675C23CE959828864 /* Assets.xcassets */; };
 		A1485209031280B87D420915 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14B98FDF4C240973E9ED4568 /* Security.framework */; };
 		AD7339481B74FBC1CA9985F6 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA16044DC70F9D2B7FC46FEE /* MetalKit.framework */; };
+		B8F352D3886A5EF860575CA8 /* share-demo-ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB7DC651449146738810C0D8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8DEA14E94C6C32C2B9B42F /* CoreGraphics.framework */; };
+		E5B7373174F06A27E9B63AB1 /* libapp.a in Resources */ = {isa = PBXBuildFile; fileRef = E1F0942C0878FE30C03DD5A7 /* libapp.a */; };
 		E6ED2AD0F9ADFD0DFB19AED2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5DFC6971A212EF857DFC766 /* UIKit.framework */; };
 		F9139FAF74159CDD003F84E6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCCE7C24ED2D73990175EA1 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BF0608F085009237745F8B03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D35B3B4EA26D54B805FBF21A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 346FC50900A754FFA41A5481;
+			remoteInfo = "share-demo-ShareExtension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		03AC8EC73F12342BD82BC50A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B8F352D3886A5EF860575CA8 /* share-demo-ShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0864E1D675C23CE959828864 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0E8DEA14E94C6C32C2B9B42F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		14B98FDF4C240973E9ED4568 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		2236F09A7167D83D5545E33A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		22E983BB538262B8C49B973B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "share-demo-ShareExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		49C8A2028B76F24C8A86F66C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		51971532D1E6407413590AC8 /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
+		51971532D1E6407413590AC8 /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
 		598DF56AC243E5FDDB6AFB64 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		5BB59DA520024E76459AC050 /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		5CCCE7C24ED2D73990175EA1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		75C284D22AC76A9D522F0FE3 /* share-demo_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "share-demo_iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		75D590016783904924889B84 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
+		75C284D22AC76A9D522F0FE3 /* share-demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "share-demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		75D590016783904924889B84 /* main.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.rs; sourceTree = "<group>"; };
 		79BAB7738245C49FC7672AC8 /* share-demo_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "share-demo_iOS.entitlements"; sourceTree = "<group>"; };
 		7B778F2EECF81887D1A0BC95 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
 		7DDA650DA80CEFB62F9C4ABA /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		82329E9CAAE5001915588760 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		B91EE2794260B4C425F3A13E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		DCB952AB100B38C9D9520EF0 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		E1F0942C0878FE30C03DD5A7 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		E5DFC6971A212EF857DFC766 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ECECAF43BD8026C337A33CF5 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		FA16044DC70F9D2B7FC46FEE /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
@@ -74,8 +106,19 @@
 		26FE974358000C388335C53C /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				8BE18C4C2DAC928F623F9CEC /* arm64 */,
 			);
 			path = Externals;
+			sourceTree = "<group>";
+		};
+		388DB8912BD0BF9AAA9A8788 /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				2236F09A7167D83D5545E33A /* Info.plist */,
+				5BB59DA520024E76459AC050 /* ShareExtension.entitlements */,
+				B91EE2794260B4C425F3A13E /* ShareViewController.swift */,
+			);
+			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		3991BEBBB00F80893E79FF29 /* share-demo */ = {
@@ -95,6 +138,7 @@
 				22E983BB538262B8C49B973B /* LaunchScreen.storyboard */,
 				26FE974358000C388335C53C /* Externals */,
 				A45FB45B07A6EC7F401AB61F /* share-demo_iOS */,
+				388DB8912BD0BF9AAA9A8788 /* ShareExtension */,
 				FB35A88FE27DDCDF9226EEA2 /* Sources */,
 				1623AA2D9C38DC7CFD2D4F31 /* src */,
 				F79BF0B05981CF4AAA18753B /* Frameworks */,
@@ -105,7 +149,8 @@
 		49004C1DCC4794256E3C86DA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				75C284D22AC76A9D522F0FE3 /* share-demo_iOS.app */,
+				75C284D22AC76A9D522F0FE3 /* share-demo.app */,
+				2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,6 +163,14 @@
 			path = bindings;
 			sourceTree = "<group>";
 		};
+		8BE18C4C2DAC928F623F9CEC /* arm64 */ = {
+			isa = PBXGroup;
+			children = (
+				CD07150EA53EA673E709C6C7 /* debug */,
+			);
+			path = arm64;
+			sourceTree = "<group>";
+		};
 		A45FB45B07A6EC7F401AB61F /* share-demo_iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +178,14 @@
 				79BAB7738245C49FC7672AC8 /* share-demo_iOS.entitlements */,
 			);
 			path = "share-demo_iOS";
+			sourceTree = "<group>";
+		};
+		CD07150EA53EA673E709C6C7 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				E1F0942C0878FE30C03DD5A7 /* libapp.a */,
+			);
+			path = debug;
 			sourceTree = "<group>";
 		};
 		F79BF0B05981CF4AAA18753B /* Frameworks */ = {
@@ -153,6 +214,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		346FC50900A754FFA41A5481 /* share-demo-ShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 473B2B96B38E42DF19FF5B9B /* Build configuration list for PBXNativeTarget "share-demo-ShareExtension" */;
+			buildPhases = (
+				21F0553D828CB8F2824F8D22 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "share-demo-ShareExtension";
+			packageProductDependencies = (
+			);
+			productName = "share-demo-ShareExtension";
+			productReference = 2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6FDCEDE250E2BB0265D720AA /* share-demo_iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 71B2A2182A0A59C8E30C088E /* Build configuration list for PBXNativeTarget "share-demo_iOS" */;
@@ -161,16 +239,18 @@
 				CC3D428E7976C8BACBDC3D95 /* Sources */,
 				AC009931973ADD8BF23106E1 /* Resources */,
 				0B9879E2EA5E6EEDA45A631D /* Frameworks */,
+				03AC8EC73F12342BD82BC50A /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6FCE2BAA1BE5C7441E361C96 /* PBXTargetDependency */,
 			);
 			name = "share-demo_iOS";
 			packageProductDependencies = (
 			);
 			productName = "share-demo_iOS";
-			productReference = 75C284D22AC76A9D522F0FE3 /* share-demo_iOS.app */;
+			productReference = 75C284D22AC76A9D522F0FE3 /* share-demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -192,10 +272,10 @@
 			);
 			mainGroup = 45D288B5A4AD8263E4BA34F1;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				346FC50900A754FFA41A5481 /* share-demo-ShareExtension */,
 				6FDCEDE250E2BB0265D720AA /* share-demo_iOS */,
 			);
 		};
@@ -209,6 +289,7 @@
 				991615C307B241B96D48D565 /* Assets.xcassets in Resources */,
 				93305C477A44758969508E99 /* LaunchScreen.storyboard in Resources */,
 				06DCEFF51CAB770C5D829309 /* assets in Resources */,
+				E5B7373174F06A27E9B63AB1 /* libapp.a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +320,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		21F0553D828CB8F2824F8D22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				796D69A2A02142ABBEDDF6CD /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC3D428E7976C8BACBDC3D95 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -248,6 +337,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6FCE2BAA1BE5C7441E361C96 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 346FC50900A754FFA41A5481 /* share-demo-ShareExtension */;
+			targetProxy = BF0608F085009237745F8B03 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		00AE2D1CC9242731B221AAE4 /* debug */ = {
@@ -317,12 +414,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ARCHS = (
-					arm64,
-				);
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "share-demo_iOS/share-demo_iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = E48BXLAA3H;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = x86_64;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -334,13 +430,63 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev;
 				PRODUCT_NAME = "share-demo";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = arm64;
+			};
+			name = debug;
+		};
+		180632F4773CFD11C66B5087 /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				DEVELOPMENT_TEAM = E48BXLAA3H;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev.ShareExtension;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = release;
+		};
+		4BFA4B69655D4497D1549A99 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				DEVELOPMENT_TEAM = E48BXLAA3H;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev.ShareExtension;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = debug;
 		};
@@ -404,12 +550,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ARCHS = (
-					arm64,
-				);
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "share-demo_iOS/share-demo_iOS.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = E48BXLAA3H;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = x86_64;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -421,8 +566,20 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev;
 				PRODUCT_NAME = "share-demo";
 				SDKROOT = iphoneos;
@@ -434,6 +591,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		473B2B96B38E42DF19FF5B9B /* Build configuration list for PBXNativeTarget "share-demo-ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BFA4B69655D4497D1549A99 /* debug */,
+				180632F4773CFD11C66B5087 /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
 		71B2A2182A0A59C8E30C088E /* Build configuration list for PBXNativeTarget "share-demo_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

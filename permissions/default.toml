@@ -11,6 +11,10 @@ It allows acccess to all share commands.
 """
 
 permissions = [
+  "allow-register-listener",
+  "allow-remove-listener",
   "allow-share-text",
   "allow-share-file",
+  "allow-get-pending-shared-content",
+  "allow-clear-pending-shared-content",
 ]

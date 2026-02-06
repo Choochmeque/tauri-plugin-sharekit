@@ -1,0 +1,521 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01EE6C783D39D087D985D47D /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA16044DC70F9D2B7FC46FEE /* MetalKit.framework */; };
+		11AE2AE5753997673A2A65BD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCCE7C24ED2D73990175EA1 /* QuartzCore.framework */; };
+		32EA4C4B1A5E9314B6E64A67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0864E1D675C23CE959828864 /* Assets.xcassets */; };
+		7722E43651AD6B0BB48A4AA4 /* share-demo-ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		796D69A2A02142ABBEDDF6CD /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91EE2794260B4C425F3A13E /* ShareViewController.swift */; };
+		9260C886A1E7E4170CFC4956 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55E2682F21AC29FB4514A69E /* AppKit.framework */; };
+		A93FD688A1FF3E25A5237376 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82329E9CAAE5001915588760 /* WebKit.framework */; };
+		BB3788685ACD5FA5BEF21B38 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598DF56AC243E5FDDB6AFB64 /* Metal.framework */; };
+		D5EDCAA89CF8E045EEEF4602 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E8DEA14E94C6C32C2B9B42F /* CoreGraphics.framework */; };
+		E2FA4E1E0F7985C00C59B52F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14B98FDF4C240973E9ED4568 /* Security.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		365E6FC3B0493C5181D241BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D35B3B4EA26D54B805FBF21A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 346FC50900A754FFA41A5481;
+			remoteInfo = "share-demo-ShareExtension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F4B79C7EE039C1D022DEF299 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7722E43651AD6B0BB48A4AA4 /* share-demo-ShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0864E1D675C23CE959828864 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0A00038C6B7CB75058E480C7 /* share-demo_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "share-demo_macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E8DEA14E94C6C32C2B9B42F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		14B98FDF4C240973E9ED4568 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		2236F09A7167D83D5545E33A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "share-demo-ShareExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		51971532D1E6407413590AC8 /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
+		55E2682F21AC29FB4514A69E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		598DF56AC243E5FDDB6AFB64 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		5BB59DA520024E76459AC050 /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		5CCCE7C24ED2D73990175EA1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		6C2778D345994B7A2E68759C /* share-demo_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "share-demo_macOS.entitlements"; sourceTree = "<group>"; };
+		75D590016783904924889B84 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
+		82329E9CAAE5001915588760 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		B91EE2794260B4C425F3A13E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		BD1F05C0FAB039E663966B72 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FA16044DC70F9D2B7FC46FEE /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		359FF950D320427778840BE0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9260C886A1E7E4170CFC4956 /* AppKit.framework in Frameworks */,
+				D5EDCAA89CF8E045EEEF4602 /* CoreGraphics.framework in Frameworks */,
+				BB3788685ACD5FA5BEF21B38 /* Metal.framework in Frameworks */,
+				01EE6C783D39D087D985D47D /* MetalKit.framework in Frameworks */,
+				11AE2AE5753997673A2A65BD /* QuartzCore.framework in Frameworks */,
+				E2FA4E1E0F7985C00C59B52F /* Security.framework in Frameworks */,
+				A93FD688A1FF3E25A5237376 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1623AA2D9C38DC7CFD2D4F31 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				51971532D1E6407413590AC8 /* lib.rs */,
+				75D590016783904924889B84 /* main.rs */,
+			);
+			name = src;
+			path = ../../src;
+			sourceTree = "<group>";
+		};
+		388DB8912BD0BF9AAA9A8788 /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				2236F09A7167D83D5545E33A /* Info.plist */,
+				5BB59DA520024E76459AC050 /* ShareExtension.entitlements */,
+				B91EE2794260B4C425F3A13E /* ShareViewController.swift */,
+			);
+			path = ShareExtension;
+			sourceTree = "<group>";
+		};
+		45D288B5A4AD8263E4BA34F1 = {
+			isa = PBXGroup;
+			children = (
+				0864E1D675C23CE959828864 /* Assets.xcassets */,
+				59B61F33D92B7017D63E2E86 /* share-demo_macOS */,
+				388DB8912BD0BF9AAA9A8788 /* ShareExtension */,
+				1623AA2D9C38DC7CFD2D4F31 /* src */,
+				F79BF0B05981CF4AAA18753B /* Frameworks */,
+				49004C1DCC4794256E3C86DA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		49004C1DCC4794256E3C86DA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A00038C6B7CB75058E480C7 /* share-demo_macOS.app */,
+				2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		59B61F33D92B7017D63E2E86 /* share-demo_macOS */ = {
+			isa = PBXGroup;
+			children = (
+				BD1F05C0FAB039E663966B72 /* Info.plist */,
+				6C2778D345994B7A2E68759C /* share-demo_macOS.entitlements */,
+			);
+			path = "share-demo_macOS";
+			sourceTree = "<group>";
+		};
+		F79BF0B05981CF4AAA18753B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				55E2682F21AC29FB4514A69E /* AppKit.framework */,
+				0E8DEA14E94C6C32C2B9B42F /* CoreGraphics.framework */,
+				598DF56AC243E5FDDB6AFB64 /* Metal.framework */,
+				FA16044DC70F9D2B7FC46FEE /* MetalKit.framework */,
+				5CCCE7C24ED2D73990175EA1 /* QuartzCore.framework */,
+				14B98FDF4C240973E9ED4568 /* Security.framework */,
+				82329E9CAAE5001915588760 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		05BF27857A27B22CF975984A /* share-demo_macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3708933B4ED4D0B9CA288AAA /* Build configuration list for PBXNativeTarget "share-demo_macOS" */;
+			buildPhases = (
+				0803CD3B762C7836CD626C70 /* Sources */,
+				DA61AB729FC2D8DA15F60CEC /* Build and Copy Rust Binary */,
+				9C0468521C59CD3D3F71E48C /* Resources */,
+				359FF950D320427778840BE0 /* Frameworks */,
+				F4B79C7EE039C1D022DEF299 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3DDC8A56D32CEDFE9B9C5A08 /* PBXTargetDependency */,
+			);
+			name = "share-demo_macOS";
+			packageProductDependencies = (
+			);
+			productName = "share-demo_macOS";
+			productReference = 0A00038C6B7CB75058E480C7 /* share-demo_macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		346FC50900A754FFA41A5481 /* share-demo-ShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 473B2B96B38E42DF19FF5B9B /* Build configuration list for PBXNativeTarget "share-demo-ShareExtension" */;
+			buildPhases = (
+				21F0553D828CB8F2824F8D22 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "share-demo-ShareExtension";
+			packageProductDependencies = (
+			);
+			productName = "share-demo-ShareExtension";
+			productReference = 2807C1E904B4BDB1E6B5D810 /* share-demo-ShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D35B3B4EA26D54B805FBF21A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = 86125EF81C5B36403FF17BB9 /* Build configuration list for PBXProject "share-demo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 45D288B5A4AD8263E4BA34F1;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				346FC50900A754FFA41A5481 /* share-demo-ShareExtension */,
+				05BF27857A27B22CF975984A /* share-demo_macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9C0468521C59CD3D3F71E48C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32EA4C4B1A5E9314B6E64A67 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DA61AB729FC2D8DA15F60CEC /* Build and Copy Rust Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build and Copy Rust Binary";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PROJECT_DIR}/scripts/build-rust.sh ${CONFIGURATION} \"${ARCHS}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0803CD3B762C7836CD626C70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		21F0553D828CB8F2824F8D22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				796D69A2A02142ABBEDDF6CD /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3DDC8A56D32CEDFE9B9C5A08 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 346FC50900A754FFA41A5481 /* share-demo-ShareExtension */;
+			targetProxy = 365E6FC3B0493C5181D241BB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		00AE2D1CC9242731B221AAE4 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = debug;
+		};
+		180632F4773CFD11C66B5087 /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev.ShareExtension;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = release;
+		};
+		4BFA4B69655D4497D1549A99 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev.ShareExtension;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = debug;
+		};
+		5661C04ADF56F13CEB7199CF /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = release;
+		};
+		AE64DCF564C0EE13C2591D77 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					arm64,
+					x86_64,
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = "share-demo_macOS/share-demo_macOS.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "share-demo_macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev;
+				PRODUCT_NAME = "share-demo";
+				SDKROOT = macosx;
+				VALID_ARCHS = (
+					arm64,
+					x86_64,
+				);
+			};
+			name = debug;
+		};
+		B1AC47758FA5F707C39A3D66 /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					arm64,
+					x86_64,
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = "share-demo_macOS/share-demo_macOS.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "share-demo_macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tauri.dev;
+				PRODUCT_NAME = "share-demo";
+				SDKROOT = macosx;
+				VALID_ARCHS = (
+					arm64,
+					x86_64,
+				);
+			};
+			name = release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3708933B4ED4D0B9CA288AAA /* Build configuration list for PBXNativeTarget "share-demo_macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE64DCF564C0EE13C2591D77 /* debug */,
+				B1AC47758FA5F707C39A3D66 /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+		473B2B96B38E42DF19FF5B9B /* Build configuration list for PBXNativeTarget "share-demo-ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BFA4B69655D4497D1549A99 /* debug */,
+				180632F4773CFD11C66B5087 /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+		86125EF81C5B36403FF17BB9 /* Build configuration list for PBXProject "share-demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00AE2D1CC9242731B221AAE4 /* debug */,
+				5661C04ADF56F13CEB7199CF /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D35B3B4EA26D54B805FBF21A /* Project object */;
+}
