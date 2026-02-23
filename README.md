@@ -1,6 +1,6 @@
-[![npm](https://img.shields.io/npm/v/@choochmeque/tauri-plugin-sharekit-api.svg)](https://www.npmjs.com/package/@choochmeque/tauri-plugin-sharekit-api)
-[![Crates.io](https://img.shields.io/crates/v/tauri-plugin-sharekit.svg)](https://crates.io/crates/tauri-plugin-sharekit)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Choochmeque/tauri-plugin-sharekit/blob/main/LICENSE)
+[![NPM Version](https://img.shields.io/npm/v/@choochmeque%2Ftauri-plugin-sharekit-api)](https://www.npmjs.com/package/@choochmeque/tauri-plugin-sharekit-api)
+[![Crates.io Version](https://img.shields.io/crates/v/tauri-plugin-sharekit)](https://crates.io/crates/tauri-plugin-sharekit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 # Tauri Plugin ShareKit
 
