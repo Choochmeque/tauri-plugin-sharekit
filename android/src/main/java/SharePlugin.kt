@@ -1,6 +1,7 @@
 package app.tauri.share
 
 import android.app.Activity
+import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -98,6 +99,9 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
             this.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             this.putExtra(Intent.EXTRA_TITLE, args.title)
         }
+
+        // Android 10+ requires ClipData so the share sheet can show a preview thumbnail.
+        sendIntent.clipData = ClipData.newUri(activity.contentResolver, args.title ?: "", contentUri)
 
         val shareIntent = Intent.createChooser(sendIntent, args.title)
         startActivityForResult(invoke, shareIntent, "shareFileResult")
