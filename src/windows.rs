@@ -42,7 +42,7 @@ pub struct ShareKit<R: Runtime> {
 /// until the user completes or cancels the share.
 ///
 /// Must be called from inside `tokio::task::spawn_blocking` (or another
-/// dedicated thread) — the WinRT COM types acquired here are tied to the
+/// dedicated thread) — the `WinRT` COM types acquired here are tied to the
 /// thread's apartment and cannot cross `.await` points.
 fn present_share_ui<F>(hwnd: HWND, populate: F) -> crate::Result<()>
 where
@@ -113,7 +113,7 @@ where
 }
 
 impl<R: Runtime> ShareKit<R> {
-    pub fn new(app: AppHandle<R>) -> Self {
+    pub const fn new(app: AppHandle<R>) -> Self {
         Self { app }
     }
 
@@ -124,17 +124,13 @@ impl<R: Runtime> ShareKit<R> {
         text: String,
         _options: ShareTextOptions,
     ) -> crate::Result<()> {
-        // HWND is `!Send` but window handles are global identifiers — transport
-        // the raw value across the thread boundary and rebuild it inside.
-        let hwnd_raw = window
-            .hwnd()
-            .map_err(|e| Error::WindowsApi(e.to_string()))?
-            .0 as isize;
         let app_name = self.app.package_info().name.clone();
 
         tokio::task::spawn_blocking(move || -> crate::Result<()> {
             init_apartment();
-            let hwnd = HWND(hwnd_raw as *mut _);
+            let hwnd = window
+                .hwnd()
+                .map_err(|e| Error::WindowsApi(e.to_string()))?;
             let content = HSTRING::from(text);
             let app_name = HSTRING::from(app_name);
 
@@ -157,15 +153,13 @@ impl<R: Runtime> ShareKit<R> {
         url: String,
         options: ShareFileOptions,
     ) -> crate::Result<()> {
-        let hwnd_raw = window
-            .hwnd()
-            .map_err(|e| Error::WindowsApi(e.to_string()))?
-            .0 as isize;
         let app_name = self.app.package_info().name.clone();
 
         tokio::task::spawn_blocking(move || -> crate::Result<()> {
             init_apartment();
-            let hwnd = HWND(hwnd_raw as *mut _);
+            let hwnd = window
+                .hwnd()
+                .map_err(|e| Error::WindowsApi(e.to_string()))?;
             let path = HSTRING::from(url);
             let title = HSTRING::from(options.title.as_deref().unwrap_or(&app_name));
 
@@ -187,7 +181,7 @@ impl<R: Runtime> ShareKit<R> {
     }
 }
 
-/// Initializes the WinRT apartment for the current thread.
+/// Initializes the `WinRT` apartment for the current thread.
 /// Safe to call repeatedly — subsequent calls return `S_FALSE` / `RPC_E_CHANGED_MODE`
 /// which we intentionally ignore.
 fn init_apartment() {
