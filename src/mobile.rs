@@ -12,6 +12,7 @@ const PLUGIN_IDENTIFIER: &str = "app.tauri.share";
 #[cfg(target_os = "ios")]
 tauri::ios_plugin_binding!(init_plugin_share);
 
+#[allow(clippy::needless_pass_by_value)] // signature required by `lib.rs` plugin setup contract
 pub fn init<R: Runtime, C: DeserializeOwned>(
     _app: &AppHandle<R>,
     api: PluginApi<R, C>,
