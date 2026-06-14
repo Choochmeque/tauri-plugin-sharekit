@@ -1,8 +1,7 @@
-use std::sync::{Arc, Mutex};
+use std::sync::mpsc;
 
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime, WebviewWindow};
-use tokio::sync::oneshot;
 
 use crate::models::{ShareFileOptions, ShareTextOptions};
 use crate::Error;
@@ -39,56 +38,23 @@ pub struct ShareKit<R: Runtime> {
     app: AppHandle<R>,
 }
 
-type CompleteTx = Arc<Mutex<Option<oneshot::Sender<bool>>>>;
-type SetupTx = Arc<Mutex<Option<oneshot::Sender<crate::Result<()>>>>>;
-
-fn wire_complete_handlers(
-    data: &DataPackage,
-    complete_tx: &CompleteTx,
-) -> windows::core::Result<()> {
-    let tx_completed = complete_tx.clone();
-    data.ShareCompleted(&TypedEventHandler::new(move |_, _| {
-        if let Some(tx) = tx_completed
-            .lock()
-            .expect("complete_tx mutex poisoned")
-            .take()
-        {
-            let _ = tx.send(true);
-        }
-        Ok(())
-    }))?;
-
-    let tx_canceled = complete_tx.clone();
-    data.ShareCanceled(&TypedEventHandler::new(move |_, _| {
-        if let Some(tx) = tx_canceled
-            .lock()
-            .expect("complete_tx mutex poisoned")
-            .take()
-        {
-            let _ = tx.send(false);
-        }
-        Ok(())
-    }))?;
-
-    Ok(())
-}
-
-async fn present_share_ui<F>(
-    dtm: &DataTransferManager,
-    interop: &IDataTransferManagerInterop,
-    hwnd: HWND,
-    populate: F,
-) -> crate::Result<()>
+/// Synchronously presents the Windows share UI and blocks the calling thread
+/// until the user completes or cancels the share.
+///
+/// Must be called from inside `tokio::task::spawn_blocking` (or another
+/// dedicated thread) — the WinRT COM types acquired here are tied to the
+/// thread's apartment and cannot cross `.await` points.
+fn present_share_ui<F>(hwnd: HWND, populate: F) -> crate::Result<()>
 where
     F: Fn(&DataPackage) -> windows::core::Result<()> + Send + Sync + 'static,
 {
-    let (setup_tx, setup_rx) = oneshot::channel::<crate::Result<()>>();
-    let (complete_tx, complete_rx) = oneshot::channel::<bool>();
-    let setup_tx: SetupTx = Arc::new(Mutex::new(Some(setup_tx)));
-    let complete_tx: CompleteTx = Arc::new(Mutex::new(Some(complete_tx)));
+    let class = HSTRING::from("Windows.ApplicationModel.DataTransfer.DataTransferManager");
+    let interop: IDataTransferManagerInterop = unsafe { RoGetActivationFactory(&class)? };
+    let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
 
-    let setup_tx_handler = setup_tx.clone();
-    let complete_tx_handler = complete_tx.clone();
+    let (setup_tx, setup_rx) = mpsc::channel::<crate::Result<()>>();
+    let (complete_tx, complete_rx) = mpsc::channel::<bool>();
+
     let handler: TypedEventHandler<DataTransferManager, DataRequestedEventArgs> =
         TypedEventHandler::new(
             move |_, args: windows::core::Ref<'_, DataRequestedEventArgs>| {
@@ -96,17 +62,22 @@ where
                     if let Some(args) = args.as_ref() {
                         let data = args.Request()?.Data()?;
                         populate(&data)?;
-                        wire_complete_handlers(&data, &complete_tx_handler)?;
+
+                        let tx_completed = complete_tx.clone();
+                        data.ShareCompleted(&TypedEventHandler::new(move |_, _| {
+                            let _ = tx_completed.send(true);
+                            Ok(())
+                        }))?;
+
+                        let tx_canceled = complete_tx.clone();
+                        data.ShareCanceled(&TypedEventHandler::new(move |_, _| {
+                            let _ = tx_canceled.send(false);
+                            Ok(())
+                        }))?;
                     }
                     Ok(())
                 })();
-                if let Some(tx) = setup_tx_handler
-                    .lock()
-                    .expect("setup_tx mutex poisoned")
-                    .take()
-                {
-                    let _ = tx.send(result.map_err(|e| Error::WindowsApi(e.to_string())));
-                }
+                let _ = setup_tx.send(result.map_err(|e| Error::WindowsApi(e.to_string())));
                 Ok(())
             },
         );
@@ -116,16 +87,16 @@ where
         interop.ShowShareUIForWindow(hwnd)?;
     }
 
-    let setup_result = match setup_rx.await {
-        Ok(r) => r,
-        Err(e) => Err(Error::WindowsApi(e.to_string())),
-    };
+    let setup_result = setup_rx
+        .recv()
+        .map_err(|e| Error::WindowsApi(e.to_string()))
+        .and_then(|r| r);
     if let Err(e) = setup_result {
         let _ = dtm.RemoveDataRequested(token);
         return Err(e);
     }
 
-    let completed = match complete_rx.await {
+    let completed = match complete_rx.recv() {
         Ok(b) => b,
         Err(e) => {
             let _ = dtm.RemoveDataRequested(token);
@@ -143,11 +114,6 @@ where
 
 impl<R: Runtime> ShareKit<R> {
     pub fn new(app: AppHandle<R>) -> Self {
-        // Initialize Windows Runtime if needed
-        unsafe {
-            let _ = RoInitialize(RO_INIT_SINGLETHREADED);
-        }
-
         Self { app }
     }
 
@@ -158,25 +124,30 @@ impl<R: Runtime> ShareKit<R> {
         text: String,
         _options: ShareTextOptions,
     ) -> crate::Result<()> {
-        let hwnd = window
+        // HWND is `!Send` but window handles are global identifiers — transport
+        // the raw value across the thread boundary and rebuild it inside.
+        let hwnd_raw = window
             .hwnd()
-            .map_err(|e| Error::WindowsApi(e.to_string()))?;
+            .map_err(|e| Error::WindowsApi(e.to_string()))?
+            .0 as isize;
+        let app_name = self.app.package_info().name.clone();
 
-        let class = HSTRING::from("Windows.ApplicationModel.DataTransfer.DataTransferManager");
-        let interop: IDataTransferManagerInterop = unsafe { RoGetActivationFactory(&class)? };
-        let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
+        tokio::task::spawn_blocking(move || -> crate::Result<()> {
+            init_apartment();
+            let hwnd = HWND(hwnd_raw as *mut _);
+            let content = HSTRING::from(text);
+            let app_name = HSTRING::from(app_name);
 
-        let content = HSTRING::from(text);
-        let app_name = HSTRING::from(self.app.package_info().name.clone());
-
-        present_share_ui(&dtm, &interop, hwnd, move |data| {
-            let props = data.Properties()?;
-            props.SetTitle(&app_name)?;
-            props.SetDescription(&content)?;
-            data.SetText(&content)?;
-            Ok(())
+            present_share_ui(hwnd, move |data| {
+                let props = data.Properties()?;
+                props.SetTitle(&app_name)?;
+                props.SetDescription(&content)?;
+                data.SetText(&content)?;
+                Ok(())
+            })
         })
         .await
+        .map_err(|e| Error::WindowsApi(format!("blocking task: {e}")))?
     }
 
     /// Opens the native share UI to share a file.
@@ -186,30 +157,41 @@ impl<R: Runtime> ShareKit<R> {
         url: String,
         options: ShareFileOptions,
     ) -> crate::Result<()> {
-        let hwnd = window
+        let hwnd_raw = window
             .hwnd()
-            .map_err(|e| Error::WindowsApi(e.to_string()))?;
-
-        let class = HSTRING::from("Windows.ApplicationModel.DataTransfer.DataTransferManager");
-        let interop: IDataTransferManagerInterop = unsafe { RoGetActivationFactory(&class)? };
-        let dtm: DataTransferManager = unsafe { interop.GetForWindow(hwnd)? };
-
-        let path = HSTRING::from(url);
+            .map_err(|e| Error::WindowsApi(e.to_string()))?
+            .0 as isize;
         let app_name = self.app.package_info().name.clone();
-        let title = HSTRING::from(options.title.as_deref().unwrap_or(&app_name));
 
-        present_share_ui(&dtm, &interop, hwnd, move |data| {
-            // Title and Description are required for Windows share to work properly
-            let props = data.Properties()?;
-            props.SetTitle(&title)?;
-            props.SetDescription(&title)?;
+        tokio::task::spawn_blocking(move || -> crate::Result<()> {
+            init_apartment();
+            let hwnd = HWND(hwnd_raw as *mut _);
+            let path = HSTRING::from(url);
+            let title = HSTRING::from(options.title.as_deref().unwrap_or(&app_name));
 
-            let file = StorageFile::GetFileFromPathAsync(&path)?.get()?;
-            let storage_item = file.cast::<IStorageItem>()?;
-            let storage_items: IIterable<IStorageItem> = vec![Some(storage_item)].into();
-            data.SetStorageItemsReadOnly(&storage_items)?;
-            Ok(())
+            present_share_ui(hwnd, move |data| {
+                // Title and Description are required for Windows share to work properly
+                let props = data.Properties()?;
+                props.SetTitle(&title)?;
+                props.SetDescription(&title)?;
+
+                let file = StorageFile::GetFileFromPathAsync(&path)?.get()?;
+                let storage_item = file.cast::<IStorageItem>()?;
+                let storage_items: IIterable<IStorageItem> = vec![Some(storage_item)].into();
+                data.SetStorageItemsReadOnly(&storage_items)?;
+                Ok(())
+            })
         })
         .await
+        .map_err(|e| Error::WindowsApi(format!("blocking task: {e}")))?
+    }
+}
+
+/// Initializes the WinRT apartment for the current thread.
+/// Safe to call repeatedly — subsequent calls return `S_FALSE` / `RPC_E_CHANGED_MODE`
+/// which we intentionally ignore.
+fn init_apartment() {
+    unsafe {
+        let _ = RoInitialize(RO_INIT_SINGLETHREADED);
     }
 }
