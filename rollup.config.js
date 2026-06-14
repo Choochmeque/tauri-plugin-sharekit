@@ -21,6 +21,7 @@ export default {
     typescript({
       declaration: true,
       declarationDir: dirname(pkg.exports.import),
+      rootDir: "guest-js",
     }),
   ],
   external: [
