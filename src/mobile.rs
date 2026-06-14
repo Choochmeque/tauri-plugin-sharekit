@@ -4,7 +4,7 @@ use tauri::{
     AppHandle, Runtime, WebviewWindow,
 };
 
-use crate::models::*;
+use crate::models::{ShareFileOptions, ShareFilePayload, ShareTextOptions, ShareTextPayload};
 
 #[cfg(target_os = "android")]
 const PLUGIN_IDENTIFIER: &str = "app.tauri.share";
@@ -28,25 +28,27 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct ShareKit<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> ShareKit<R> {
-    pub fn share_text(
+    pub async fn share_text(
         &self,
         _window: WebviewWindow<R>,
         text: String,
         options: ShareTextOptions,
     ) -> crate::Result<()> {
         self.0
-            .run_mobile_plugin("shareText", ShareTextPayload { text, options })
+            .run_mobile_plugin_async("shareText", ShareTextPayload { text, options })
+            .await
             .map_err(Into::into)
     }
 
-    pub fn share_file(
+    pub async fn share_file(
         &self,
         _window: WebviewWindow<R>,
         url: String,
         options: ShareFileOptions,
     ) -> crate::Result<()> {
         self.0
-            .run_mobile_plugin("shareFile", ShareFilePayload { url, options })
+            .run_mobile_plugin_async("shareFile", ShareFilePayload { url, options })
+            .await
             .map_err(Into::into)
     }
 }

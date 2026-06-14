@@ -1,7 +1,7 @@
 use tauri::AppHandle;
 use tauri::{command, Runtime, WebviewWindow};
 
-use crate::models::*;
+use crate::models::{ShareFileOptions, SharePosition, ShareTextOptions};
 use crate::ShareExt;
 
 #[command]
@@ -22,6 +22,7 @@ pub async fn share_text<R: Runtime>(
                 position,
             },
         )
+        .await
         .map_err(|e| e.to_string())
 }
 
@@ -45,5 +46,6 @@ pub async fn share_file<R: Runtime>(
                 position,
             },
         )
+        .await
         .map_err(|e| e.to_string())
 }

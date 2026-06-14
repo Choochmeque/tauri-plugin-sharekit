@@ -1,7 +1,7 @@
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime, WebviewWindow};
 
-use crate::models::*;
+use crate::models::{ShareFileOptions, ShareTextOptions};
 use crate::Error;
 
 use std::sync::mpsc;
@@ -47,7 +47,7 @@ impl<R: Runtime> ShareKit<R> {
     }
 
     /// Opens the native share UI to share text content.
-    pub fn share_text(
+    pub async fn share_text(
         &self,
         window: WebviewWindow<R>,
         text: String,
@@ -129,12 +129,12 @@ impl<R: Runtime> ShareKit<R> {
         if completed {
             Ok(())
         } else {
-            Err(Error::WindowsApi("Share cancelled".to_string()))
+            Err(Error::ShareCancelled)
         }
     }
 
     /// Opens the native share UI to share a file.
-    pub fn share_file(
+    pub async fn share_file(
         &self,
         window: WebviewWindow<R>,
         url: String,
@@ -233,7 +233,7 @@ impl<R: Runtime> ShareKit<R> {
         if completed {
             Ok(())
         } else {
-            Err(Error::WindowsApi("Share cancelled".to_string()))
+            Err(Error::ShareCancelled)
         }
     }
 }
