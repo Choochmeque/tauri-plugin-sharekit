@@ -1,5 +1,19 @@
 <script lang="ts">
-  import { shareText, shareFile, type SharePosition } from "@choochmeque/tauri-plugin-sharekit-api";
+  import { onMount } from "svelte";
+  import { convertFileSrc } from "@tauri-apps/api/core";
+  import {
+    shareText,
+    shareFile,
+    getPendingSharedContent,
+    clearPendingSharedContent,
+    onSharedContent,
+    type SharedContent,
+    type SharePosition
+  } from "@choochmeque/tauri-plugin-sharekit-api";
+
+  function isImage(mimeType?: string): boolean {
+    return mimeType?.startsWith("image/") ?? false;
+  }
 
   // Text sharing state
   let text = $state("Hello from Tauri ShareKit!");
@@ -12,12 +26,61 @@
   let fileTitle = $state("");
   let fileStatus = $state("");
 
+  // Received content state
+  let receivedContent = $state<SharedContent | null>(null);
+
+  // Log output
+  let logs = $state("");
+
+  function log(message: string | object) {
+    logs += `[${new Date().toLocaleTimeString()}] ${typeof message === 'string' ? message : JSON.stringify(message, null, 2)}\n\n`;
+  }
+
+  onMount(async () => {
+    log("App mounted");
+
+    // Check for content from cold start
+    await checkForSharedContent();
+
+    // Listen for content from warm start
+    const listener = await onSharedContent((content) => {
+      log("Received shared content: " + JSON.stringify(content, null, 2));
+      receivedContent = content;
+    });
+
+    log("Listener registered");
+
+    return () => listener.unregister();
+  });
+
+  async function checkForSharedContent() {
+    log("Checking for pending shared content...");
+    try {
+      const content = await getPendingSharedContent();
+      if (content) {
+        log("Found pending content: " + JSON.stringify(content, null, 2));
+        receivedContent = content;
+      } else {
+        log("No pending content");
+      }
+    } catch (e) {
+      log("Failed to get shared content: " + e);
+    }
+  }
+
+  async function handleClearSharedContent() {
+    log("Clearing shared content");
+    await clearPendingSharedContent();
+    receivedContent = null;
+  }
+
   // Position state (iPad/macOS only)
   let usePosition = $state(false);
   let preferredEdge = $state<"top" | "bottom" | "left" | "right">("bottom");
 
   async function handleShareText(event: MouseEvent) {
     textStatus = "Sharing...";
+    log("Sharing text: " + text.substring(0, 50) + (text.length > 50 ? "..." : ""));
     try {
       const position = usePosition
         ? { x: event.clientX, y: event.clientY, preferredEdge }
@@ -27,8 +90,10 @@
         : undefined;
       await shareText(text, options);
       textStatus = "Shared successfully!";
+      log("Text shared successfully");
     } catch (e) {
       textStatus = `Error: ${e}`;
+      log("Share text failed: " + e);
     }
   }
 
@@ -38,6 +103,7 @@
       return;
     }
     fileStatus = "Sharing...";
+    log("Sharing file: " + fileUrl);
     try {
       const position = usePosition
         ? { x: event.clientX, y: event.clientY, preferredEdge }
@@ -48,14 +114,42 @@
       if (position) options.position = position;
       await shareFile(fileUrl, Object.keys(options).length ? options : undefined);
       fileStatus = "Shared successfully!";
+      log("File shared successfully");
     } catch (e) {
       fileStatus = `Error: ${e}`;
+      log("Share file failed: " + e);
     }
   }
 </script>
 
 <main class="container">
   <h1>ShareKit Demo</h1>
+
+  {#if receivedContent}
+    <section class="card received">
+      <h2>Received Content</h2>
+      <p><strong>Type:</strong> {receivedContent.type}</p>
+      {#if receivedContent.type === "text" && receivedContent.text}
+        <p><strong>Text:</strong> {receivedContent.text}</p>
+      {:else if receivedContent.type === "files" && receivedContent.files}
+        <p><strong>Files:</strong></p>
+        <ul>
+          {#each receivedContent.files as file}
+            <li>
+              {#if isImage(file.mimeType)}
+                <img src={convertFileSrc(file.path)} alt={file.name} class="preview-image" />
+              {/if}
+              <strong>{file.name}</strong>
+              <br /><small>Path: {file.path}</small>
+              {#if file.mimeType}<br /><small>MIME: {file.mimeType}</small>{/if}
+              {#if file.size}<br /><small>Size: {file.size} bytes</small>{/if}
+            </li>
+          {/each}
+        </ul>
+      {/if}
+      <button onclick={handleClearSharedContent}>Clear</button>
+    </section>
+  {/if}
 
   <section class="card">
     <h2>Position Settings (iPad/macOS)</h2>
@@ -113,6 +207,12 @@
       <p class="status" class:error={fileStatus.startsWith("Error")}>{fileStatus}</p>
     {/if}
   </section>
+
+  <section class="card">
+    <h2>Log Output</h2>
+    <pre class="log-box">{logs || 'No activity yet...'}</pre>
+    <button onclick={() => logs = ''}>Clear Log</button>
+  </section>
 </main>
 
 <style>
@@ -152,6 +252,33 @@
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card.received {
+    border: 2px solid #396cd8;
+    background: #e8f0fe;
+  }
+
+  .card.received ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .card.received li {
+    margin-bottom: 0.5rem;
+    word-break: break-all;
+  }
+
+  .card.received p {
+    word-break: break-all;
+  }
+
+  .preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    display: block;
   }
 
   .form-group {
@@ -235,6 +362,22 @@
     color: #721c24;
   }
 
+  .log-box {
+    background: #1a1a1a;
+    color: #c9d1d9;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #333;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
   @media (prefers-color-scheme: dark) {
     :root {
       color: #f6f6f6;
@@ -244,6 +387,11 @@
     .card {
       background: #3f3f3f;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card.received {
+      background: #2a3a5c;
+      border-color: #5a8cfa;
     }
 
     input, textarea, select {
