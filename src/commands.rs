@@ -1,7 +1,7 @@
 use tauri::AppHandle;
 use tauri::{command, Runtime, WebviewWindow};
 
-use crate::models::{ShareFileOptions, SharePosition, ShareTextOptions};
+use crate::models::{ShareFileOptions, SharePosition, ShareTextOptions, SharedContent};
 use crate::ShareExt;
 
 #[command]
@@ -47,5 +47,21 @@ pub async fn share_file<R: Runtime>(
             },
         )
         .await
+        .map_err(|e| e.to_string())
+}
+
+#[command]
+pub async fn get_pending_shared_content<R: Runtime>(
+    app: AppHandle<R>,
+) -> Result<Option<SharedContent>, String> {
+    app.share()
+        .get_pending_shared_content()
+        .map_err(|e| e.to_string())
+}
+
+#[command]
+pub async fn clear_pending_shared_content<R: Runtime>(app: AppHandle<R>) -> Result<(), String> {
+    app.share()
+        .clear_pending_shared_content()
         .map_err(|e| e.to_string())
 }

@@ -1,0 +1,18 @@
+{
+  "publisher": "CN=YourCompany",
+  "publisherDisplayName": "Your Company Name",
+  "capabilities": {
+    "general": [
+      "internetClient"
+    ]
+  },
+  "extensions": {
+    "shareTarget": true,
+    "fileAssociations": [],
+    "protocolHandlers": []
+  },
+  "signing": {
+    "pfx": null,
+    "pfxPassword": null
+  }
+}
