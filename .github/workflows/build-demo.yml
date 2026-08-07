@@ -16,11 +16,15 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
+      # Refresh the apt index so the cache action resolves current package
+      # versions; a stale index causes 404s and a silent empty install.
+      - run: sudo apt-get update
+        if: matrix.os == 'ubuntu-latest'
       - uses: awalsh128/cache-apt-pkgs-action@latest
         if: matrix.os == 'ubuntu-latest'
         with:
           packages: libglib2.0-dev libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf
-          version: "1.1"
+          version: "1.2"
 
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable

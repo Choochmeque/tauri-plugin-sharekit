@@ -35,11 +35,16 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
+      # The cache action resolves package versions against the local apt
+      # index; without a refresh a stale index causes 404s from the mirror
+      # and the action silently installs nothing.
+      - run: sudo apt-get update
+        if: matrix.os == 'ubuntu-latest'
       - uses: awalsh128/cache-apt-pkgs-action@latest
         if: matrix.os == 'ubuntu-latest'
         with:
           packages: libglib2.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf llvm-dev clang cmake grcov
-          version: "1.1"  # bump this to invalidate the cache when needed
+          version: "1.2"  # bump this to invalidate the cache when needed
 
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
@@ -68,10 +73,11 @@ jobs:
     name: cargo-deadlinks
     runs-on: ubuntu-latest
     steps:
+      - run: sudo apt-get update
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libglib2.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf llvm-dev clang cmake grcov
-          version: "1.1"  # bump this to invalidate the cache when needed
+          version: "1.2"  # bump this to invalidate the cache when needed
 
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
@@ -100,10 +106,11 @@ jobs:
     name: cargo-semver
     runs-on: ubuntu-latest
     steps:
+      - run: sudo apt-get update
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libglib2.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf llvm-dev clang cmake grcov
-          version: "1.1"  # bump this to invalidate the cache when needed
+          version: "1.2"  # bump this to invalidate the cache when needed
 
       - uses: actions/checkout@v7
       - uses: obi1kenobi/cargo-semver-checks-action@v2
