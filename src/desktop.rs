@@ -17,7 +17,7 @@ pub struct ShareKit<R: Runtime>(AppHandle<R>);
 // `async` keyword on share_text/share_file is required so `commands.rs` can `.await`
 // the call uniformly across platforms; on this stub no await is needed.
 impl<R: Runtime> ShareKit<R> {
-    #[allow(clippy::unused_async)]
+    #[allow(unknown_lints, clippy::unused_async, clippy::unused_async_trait_impl)]
     pub async fn share_text(
         &self,
         _window: WebviewWindow<R>,
@@ -27,7 +27,7 @@ impl<R: Runtime> ShareKit<R> {
         Err(crate::Error::UnsupportedPlatform)
     }
 
-    #[allow(clippy::unused_async)]
+    #[allow(unknown_lints, clippy::unused_async, clippy::unused_async_trait_impl)]
     pub async fn share_file(
         &self,
         _window: WebviewWindow<R>,
