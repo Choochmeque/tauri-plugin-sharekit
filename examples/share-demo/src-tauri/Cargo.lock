@@ -3892,7 +3892,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-sharekit"
-version = "0.4.0-rc.5"
+version = "0.4.0-rc.6"
 dependencies = [
  "log",
  "objc2",
