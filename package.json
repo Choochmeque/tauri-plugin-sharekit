@@ -31,7 +31,8 @@
     "pretest": "pnpm build",
     "lint": "eslint .",
     "format": "prettier --write \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\"",
-    "format-check": "prettier --check \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\""
+    "format-check": "prettier --check \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\"",
+    "format:check": "prettier --check \"./**/*.{cjs,mjs,js,jsx,mts,ts,tsx,html,css,json}\""
   },
   "files": [
     "dist-js",
