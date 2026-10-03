@@ -169,7 +169,7 @@ impl<R: Runtime> ShareKit<R> {
                 props.SetTitle(&title)?;
                 props.SetDescription(&title)?;
 
-                let file = StorageFile::GetFileFromPathAsync(&path)?.get()?;
+                let file = StorageFile::GetFileFromPathAsync(&path)?.join()?;
                 let storage_item = file.cast::<IStorageItem>()?;
                 let storage_items: IIterable<IStorageItem> = vec![Some(storage_item)].into();
                 data.SetStorageItemsReadOnly(&storage_items)?;
