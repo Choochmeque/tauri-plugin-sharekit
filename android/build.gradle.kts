@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "app.tauri.share"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 21
