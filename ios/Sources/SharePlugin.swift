@@ -37,15 +37,17 @@ class SharePlugin: Plugin {
       let activityViewController = UIActivityViewController(activityItems: [args.text], applicationActivities: nil)
 
       // Display as popover on iPad as required by Apple
-      let posX = args.position?.x ?? Double(self.webview.bounds.midX)
-      let posY = args.position?.y ?? Double(self.webview.bounds.midY)
-      activityViewController.popoverPresentationController?.sourceView = self.webview
-      activityViewController.popoverPresentationController?.sourceRect = CGRect(
-        x: posX,
-        y: posY,
-        width: 0.0,
-        height: 0.0
-      )
+      if UIDevice.current.userInterfaceIdiom == .pad {
+        let posX = args.position?.x ?? Double(self.webview.bounds.midX)
+        let posY = args.position?.y ?? Double(self.webview.bounds.midY)
+        activityViewController.popoverPresentationController?.sourceView = self.webview
+        activityViewController.popoverPresentationController?.sourceRect = CGRect(
+          x: posX,
+          y: posY,
+          width: 0.0,
+          height: 0.0
+        )
+      }
 
       activityViewController.completionWithItemsHandler = { _, completed, _, error in
         if let error = error {
@@ -85,15 +87,17 @@ class SharePlugin: Plugin {
       )
       
       // Display as popover on iPad as required by Apple
-      let posX = args.position?.x ?? Double(self.webview.bounds.midX)
-      let posY = args.position?.y ?? Double(self.webview.bounds.midY)
-      activityViewController.popoverPresentationController?.sourceView = self.webview
-      activityViewController.popoverPresentationController?.sourceRect = CGRect(
-        x: posX,
-        y: posY,
-        width: 0.0,
-        height: 0.0
-      )
+      if UIDevice.current.userInterfaceIdiom == .pad {
+        let posX = args.position?.x ?? Double(self.webview.bounds.midX)
+        let posY = args.position?.y ?? Double(self.webview.bounds.midY)
+        activityViewController.popoverPresentationController?.sourceView = self.webview
+        activityViewController.popoverPresentationController?.sourceRect = CGRect(
+          x: posX,
+          y: posY,
+          width: 0.0,
+          height: 0.0
+        )
+      }
 
       activityViewController.completionWithItemsHandler = { _, completed, _, error in
         if let error = error {
